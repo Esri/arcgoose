@@ -4,7 +4,7 @@
 export const castAttributes = (attributes, schema) => {
   const castJsonAttributes = {};
   Object.keys(schema)
-    .filter(key => schema[key].type === 'object')
+    .filter(key => schema[key].type === Object || schema[key].type === 'object')
     .forEach((key) => {
       try {
         castJsonAttributes[key] = JSON.stringify(attributes[key]);
@@ -15,7 +15,7 @@ export const castAttributes = (attributes, schema) => {
 
   const castDateAttributes = {};
   Object.keys(schema)
-    .filter(key => schema[key].type === 'date')
+    .filter(key => schema[key].type === Date || schema[key].type === 'date')
     .forEach((key) => {
       try {
         castDateAttributes[key] = attributes[key].getTime();

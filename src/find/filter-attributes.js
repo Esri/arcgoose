@@ -9,7 +9,7 @@ export const castAttributes = (attributes, schema) => {
   // parse JSON objects
   Object.keys(newAttributes)
     .filter(key =>
-      (schema[key] && schema[key].type === 'object'),
+      (schema[key] && (schema[key].type === Object || schema[key].type === 'object')),
     )
     .forEach((key) => {
       if (newAttributes[key] === null) {
@@ -27,7 +27,7 @@ export const castAttributes = (attributes, schema) => {
   // parse dates
   Object.keys(newAttributes)
     .filter(key =>
-      (schema[key] && schema[key].type === 'date'),
+      (schema[key] && (schema[key].type === Date || schema[key].type === 'date')),
     )
     .forEach((key) => {
       if (newAttributes[key] === null) {
