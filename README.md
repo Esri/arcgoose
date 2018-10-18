@@ -4,12 +4,12 @@ Let's face it, writing ArcGIS REST API validation, casting and business logic bo
 That's why we wrote Arcgoose.
 
 ```javascript
-const catsLayer = new FeatureLayer({
+const CatLayer = arcgoose.modelFeatureLayer({
   url,
-  schema: { name: 'string' },
+  schema: { name: String },
 });
 
-const cat = await catsLayer.findOne({ name: 'Grumpy' }).exec();
+const cat = await CatLayer.findOne({ name: 'Grumpy' }).exec();
 ```
 
 Arcgoose provides a straight-forward, schema-based solution to model your application data. It
