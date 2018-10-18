@@ -23,29 +23,13 @@ module.exports = {
     extensions: ['.js', '.jsx'],
   },
   entry: {
-    'feature-layer': [
+    arcgoose: [
       'idempotent-babel-polyfill',
-      './src/feature-layer.js',
+      './src/arcgoose.js',
     ],
-    'feature-layer.min': [
+    'arcgoose.min': [
       'idempotent-babel-polyfill',
-      './src/feature-layer.js',
-    ],
-    'feature-service': [
-      'idempotent-babel-polyfill',
-      './src/feature-layer.js',
-    ],
-    'feature-service.min': [
-      'idempotent-babel-polyfill',
-      './src/feature-layer.js',
-    ],
-    'feature-table': [
-      'idempotent-babel-polyfill',
-      './src/feature-layer.js',
-    ],
-    'feature-table.min': [
-      'idempotent-babel-polyfill',
-      './src/feature-layer.js',
+      './src/arcgoose.js',
     ],
   },
   output: {
