@@ -17,17 +17,17 @@ import request from '../helpers/request-with-retry';
 
 
 const fetchPortalItem = (portalUrl, portalItemId) =>
-  request(`https://${portalUrl}/sharing/rest/content/items/${portalItemId}`);
+  request(`https://${portalUrl}/sharing/rest/content/items/${portalItemId}?f=json`);
 
 
-const fetchFeatureServiceInfo = featureServiceUrl => request(featureServiceUrl);
+const fetchFeatureServiceInfo = featureServiceUrl => request(`${featureServiceUrl}?f=json`);
 
 
 const fetchLayers = (url, layers) => {
   if (!Array.isArray(layers)) return [];
 
   const results = [];
-  layers.forEach(({ id }) => results.push(request(`${url}/${id}`)));
+  layers.forEach(({ id }) => results.push(request(`${url}/${id}?f=json`)));
 
   return Promise.all(results);
 };
@@ -42,15 +42,25 @@ export default async ({ url, portalUrl, portalItemId }) => {
   }
 
   const result = await fetchFeatureServiceInfo(featureServiceUrl);
-  const featureServiceInfo = result.data;
-  const layers = await fetchLayers(featureServiceUrl, featureServiceInfo.layers);
-  const tables = await fetchLayers(featureServiceUrl, featureServiceInfo.tables);
-
-  return {
-    ...featureServiceInfo,
+  const featureServiceInfo = {
+    ...result.data,
     type: 'Feature Service',
     url: featureServiceUrl,
-    layers: layers.map(layer => ({ ...layer.data, url: `${featureServiceUrl}/${layer.data.id}` })),
-    tables: tables.map(table => ({ ...table.data, url: `${featureServiceUrl}/${table.data.id}` })),
+    layers: {},
+    tables: {},
   };
+
+  const layers = await fetchLayers(featureServiceUrl, result.data.layers);
+  const tables = await fetchLayers(featureServiceUrl, result.data.tables);
+
+  layers.forEach(layer => featureServiceInfo.layers[layer.data.name] = {
+    ...layer.data,
+    url: `${featureServiceUrl}/${layer.data.id}`,
+  });
+  tables.forEach(table => featureServiceInfo.tables[table.data.name] = {
+    ...table.data,
+    url: `${featureServiceUrl}/${table.data.id}`,
+  });
+
+  return featureServiceInfo;
 };

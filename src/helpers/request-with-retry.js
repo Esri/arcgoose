@@ -17,17 +17,8 @@ export const requestWithRetry = async (url, params, inputTime) => {
   const time = inputTime ? inputTime + 1 : 1;
   const [request] = await esriLoader.loadModules(['esri/request']);
 
-  let requestUrl = url;
-  if (requestUrl.split('f=json').length === 1) {
-    if (requestUrl.includes('?')) {
-      requestUrl += '&f=json';
-    } else {
-      requestUrl += '?f=json';
-    }
-  }
-
   try {
-    return await request(requestUrl, {
+    return await request(url, {
       ...params,
       f: 'json',
       responseType: 'json',
@@ -42,7 +33,7 @@ export const requestWithRetry = async (url, params, inputTime) => {
     // console.log(`ArcGoose: waiting ${2 ** time} before retrying query...`);
 
     await wait(2 ** time);
-    return requestWithRetry(requestUrl, params, time);
+    return requestWithRetry(url, params, time);
   }
 };
 

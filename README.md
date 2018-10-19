@@ -4,8 +4,8 @@ Let's face it, writing ArcGIS REST API validation, casting and business logic bo
 That's why we wrote Arcgoose.
 
 ```javascript
-const schema = { name: String };
-const Cat = await arcgoose.model(connection.layers.Cats, schema);
+const connection = await arcgoose.connect({ url });
+const Cat = await arcgoose.model(connection.layers.Cats, { name: String });
 
 const cat = await Cat.findOne({ name: 'Grumpy' }).exec();
 ```
@@ -25,13 +25,13 @@ out of the box.\*
 Using the feature server URL:
 
 ```javascript
-const connection = await arcgoose.connect({ url, token });
+const connection = await arcgoose.connect({ url });
 ```
 
 Using the hosted feature layer item id:
 
 ```javascript
-const connection = await arcgoose.connect({ portalUrl, portalItemId, token });
+const connection = await arcgoose.connect({ portalUrl, portalItemId });
 ```
 
 Structure of the `connection` JSON object:
@@ -39,14 +39,13 @@ Structure of the `connection` JSON object:
 ```javascript
 {
   url,
-  token,
   capabilities: { create, query, update, delete, editing },
   layers: {
-    Cats: { id, fields, objectIdField },
-    Dogs: { id, fields, objectIdField },
+    Cats: { id, url, fields, objectIdField },
+    Dogs: { id, url, fields, objectIdField },
   },
   tables: {
-    Rabbits: { id, fields, objectIdField },
+    Rabbits: { id, url, fields, objectIdField },
   },
 }
 ```
