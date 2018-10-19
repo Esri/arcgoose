@@ -56,12 +56,12 @@ export default async ({ url, portalUrl, portalItemId }) => {
   layers.forEach(layer => featureServiceInfo.layers[layer.data.name] = {
     ...layer.data,
     url: `${featureServiceUrl}/${layer.data.id}`,
-    serviceUrl: `${featureServiceUrl}/${layer.data.id}`,
+    serviceUrl: featureServiceUrl,
   });
   tables.forEach(table => featureServiceInfo.tables[table.data.name] = {
     ...table.data,
     url: `${featureServiceUrl}/${table.data.id}`,
-    serviceUrl: `${featureServiceUrl}/${layer.data.id}`,
+    serviceUrl: featureServiceUrl,
   });
 
   return featureServiceInfo;
