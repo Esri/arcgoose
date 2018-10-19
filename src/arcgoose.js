@@ -3,7 +3,9 @@ import FeatureLayer from './feature-layer';
 import FeatureTable from './feature-table';
 
 export default {
-  modelFeatureService: params => new FeatureService(params),
-  modelFeatureLayer: params => new FeatureLayer(params),
-  modelFeatureTable: params => new FeatureTable(params),
+  model: {
+    featureService: params => new FeatureService(params),
+    featureLayer: params => new FeatureLayer(params),
+    featureTable: params => new FeatureTable(params),
+  },
 };

@@ -1,8 +1,8 @@
 {
-  "name": "ZoningDesigner",
+  "name": "arcgoose",
   "version": "0.1.0",
   "description": "",
-  "main": "dojoConfig.js",
+  "main": "dist/arcgoose.js",
   "scripts": {
     "build": "webpack --config webpack.config.prod.js",
     "test": "jest",
