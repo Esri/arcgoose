@@ -8,6 +8,10 @@ import {
 } from './apply-edits/process-results';
 
 export default async (handleArray) => {
+  if (handleArray.length < 1) return null;
+
+  const serviceUrl = handleArray[0].serviceUrl;
+
   const edits = handleArray.map(handle => ({
     id: handle.payload.id,
     adds: handle.payload.adds,
@@ -22,7 +26,7 @@ export default async (handleArray) => {
     edits: JSON.stringify(edits),
   };
 
-  const editsResult = await requestWithRetry(`${this.url}/applyEdits`, {
+  const editsResult = await requestWithRetry(`${serviceUrl}/applyEdits`, {
     query,
     method: 'post',
     responseType: 'json',
