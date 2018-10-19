@@ -46,6 +46,13 @@ export default async ({ url, portalUrl, portalItemId }) => {
     ...result.data,
     type: 'Feature Service',
     url: featureServiceUrl,
+    capabilities: {
+      create: result.data.capabilities.includes('Create'),
+      query: result.data.capabilities.includes('Query'),
+      update: result.data.capabilities.includes('Update'),
+      delete: result.data.capabilities.includes('Delete'),
+      editing: result.data.capabilities.includes('Editing'),
+    },
     layers: {},
     tables: {},
   };
