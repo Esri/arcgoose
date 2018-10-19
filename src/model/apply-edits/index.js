@@ -46,6 +46,18 @@ export class ApplyEdits {
     return this;
   }
 
+  handle() {
+    return {
+      serviceUrl: this.featureLayer.serviceUrl,
+      payload: {
+        id: this.featureLayer.id,
+        adds: this.adds.length ? JSON.stringify(this.adds) : null,
+        updates: this.updates.length ? JSON.stringify(this.updates) : null,
+        deletes: this.deletes.length ? this.deletes.join(',') : null,
+      },
+    };
+  }
+
   async exec() {
     const query = {
       f: 'json',

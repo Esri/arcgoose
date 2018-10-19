@@ -61,3 +61,18 @@ const Cat = await arcgoose.model(connection.layers.Cats, schema);
 
 const cat = await Cat.findOne({ name: 'Grumpy' }).exec();
 ```
+
+### Multi-layer Updates
+
+You can also collect updates across multiple layers and execute them in a single REST call.
+
+```javascript
+const schema = { name: String };
+const Cat = await arcgoose.model(connection.layers.Cats, schema);
+const Mouse = await arcgoose.model(connection.layers.Mice, schema);
+
+const catHandle = Cat.applyEdits().add({ name: 'Tom' }).handle();
+const mouseHandle = Mouse.applyEdits().add({ name: 'Jerry' }).handle();
+
+arcgoose.execAll([catHandle, mouseHandle]);
+```
