@@ -18,9 +18,9 @@ export class FeatureService {
     this.url = url;
     this.layers = [];
 
-    layers.forEach(({ id, layerId, type, schema }) => {
+    layers.forEach(({ id, name, type, schema }) => {
       const layer = {
-        id: layerId,
+        id: name,
         index: id,
         url: `${url}/${id}`,
         type,

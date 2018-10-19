@@ -9,7 +9,7 @@ import {
 
 import {
   requestWithRetry,
-} from '../helpers/request-with-retry';
+} from '../../helpers/request-with-retry';
 
 export class ApplyEdits {
   constructor(featureLayer, schema) {

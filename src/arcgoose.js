@@ -1,11 +1,7 @@
-import FeatureService from './feature-service';
-import FeatureLayer from './feature-layer';
-import FeatureTable from './feature-table';
+import connect from './connect';
+import model from './model';
 
 export default {
-  model: {
-    featureService: params => new FeatureService(params),
-    featureLayer: params => new FeatureLayer(params),
-    featureTable: params => new FeatureTable(params),
-  },
+  connect,
+  model,
 };

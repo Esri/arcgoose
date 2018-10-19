@@ -5,7 +5,7 @@ import {
 
 import {
   requestWithRetry,
-} from '../helpers/request-with-retry';
+} from '../../helpers/request-with-retry';
 
 
 const fromAlias = (fieldName, schema) => {
