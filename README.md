@@ -50,6 +50,29 @@ Structure of the `connection` JSON object:
 }
 ```
 
+### Schemas
+
+A schema maps to attributes in the feature layer/table. Schemas are used for default population of
+attributes (similar to `outFields`), and can also be used for type casting and aliases.
+
+```javascript
+export const catSchema = {
+  GlobalID: {
+    type: String,
+  },
+  CatName: {
+    type: String,
+    alias: 'name', // 'CatName' will become 'name' in the returned object
+  },
+  DateOfBirth: {
+    type: Date, // 'DateOfBirth' will be casted to a Date object
+  },
+  Details: {
+    type: Object, // 'Details' will be casted from a string to a JSON object
+  }
+};
+```
+
 ### Models
 
 Models are fancy constructors compiled from `Schema` definitions. Instances of models are used
@@ -62,7 +85,103 @@ const Cat = await arcgoose.model(connection.layers.Cats, schema);
 const cat = await Cat.findOne({ name: 'Grumpy' }).exec();
 ```
 
-### Multi-layer Updates
+### Queries
+
+Queries can be executed using the `find()` or `findOne()` methods. You can pass one or more
+object fields to be matched.
+
+```javascript
+const cat = await Cat
+  .find({ name: 'Grumpy' })
+  .exec();
+```
+
+Additional query methods can be chained after the `find()` method.
+
+```javascript
+const cat = await Cat
+  .find({ name: 'Grumpy' })
+  .populate(['name', 'dateOfBirth'])
+  .returnGeometry()
+  .exec();
+```
+
+Here is a list of additional query methods:
+
+```javascript
+.filter(additionalSQLWhereClause) // chain as many as you like
+```
+
+```javascript
+.populate(outFields) // otherwise all fields from the schema will be populated
+```
+
+```javascript
+.geometry(geometry, geometryType).intersects() // spatial query
+```
+
+```javascript
+.geometry(geometry, geometryType).contains()  // spatial query
+```
+
+```javascript
+.returnGeometry()
+```
+
+```javascript
+.returnCentroid()
+```
+
+```javascript
+.outSpatialReference(wkid)
+```
+
+```javascript
+.sort(sortOrder)
+```
+
+```javascript
+.limit(amount)
+```
+
+```javascript
+.outStatistics(outStatistics, groupByFieldsForStatistics)
+```
+
+### Edits
+
+Edits can be applied using the `applyEdits()` method.
+
+```javascript
+const cat = await Cat
+  .applyEdits()
+  .add({ name: 'Grumpy' })
+  .exec();
+```
+
+The following edits are possible:
+
+```javascript
+.add(features)
+```
+
+```javascript
+.update(features)
+```
+
+```javascript
+.delete(idArray)
+```
+
+```javascript
+.useGlobalIds() // default
+```
+
+```javascript
+.useObjectIds()
+```
+
+### Multi-layer Edits
 
 You can also collect updates across multiple layers and execute them in a single REST call.
 
@@ -76,3 +195,28 @@ const mouseHandle = Mouse.applyEdits().add({ name: 'Jerry' }).handle();
 
 arcgoose.execAll([catHandle, mouseHandle]);
 ```
+
+## Issues
+
+Find a bug or want to request a new feature?  Please let us know by submitting an issue.
+
+## Contributing
+
+Esri welcomes contributions from anyone and everyone. Please see our [guidelines for contributing](https://github.com/esri/contributing).
+
+## Licensing
+Copyright 2018 Esri
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+
+A copy of the license is available in the repository's [license.txt](/license.txt) file.
