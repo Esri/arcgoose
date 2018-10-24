@@ -14,11 +14,13 @@ const getFieldsFromSchema = schema => Object.keys(schema);
 
 
 export class FeatureLayer {
-  constructor({ url, schema, layerId }) {
+  constructor({ url, serviceUrl, id, name, schema }) {
     this.type = 'layer';
     this.url = url;
+    this.serviceUrl = serviceUrl;
+    this.id = id;
+    this.name = name;
     this.schema = schema;
-    this.id = layerId;
   }
 
 

@@ -12,12 +12,14 @@ export default async (handleArray) => {
 
   const serviceUrl = handleArray[0].serviceUrl;
 
-  const edits = handleArray.map(handle => ({
-    id: handle.payload.id,
-    adds: handle.payload.adds,
-    deletes: handle.payload.deletes,
-    updates: handle.payload.updates,
-  }));
+  const edits = handleArray
+    .map(handle => ({
+      id: handle.payload.id,
+      adds: handle.payload.adds,
+      deletes: handle.payload.deletes,
+      updates: handle.payload.updates,
+    }))
+    .filter(handle => handle.adds || handle.deletes || handle.updates);
 
   const query = {
     f: 'json',
@@ -32,11 +34,9 @@ export default async (handleArray) => {
     responseType: 'json',
   });
 
-  /* TODO: handle missing data field */
-
   return editsResult.data.map(layer => ({
-    layerId: this.layers.find(l => l.index === layer.id) &&
-      this.layers.find(l => l.index === layer.id).id,
+    layerId: layer.id,
+    layerName: (handleArray.find(handle => handle.payload.id === layer.id) || {}).name,
     addedFeatures: processResults(layer.addResults),
     updatedFeatures: processResults(layer.updateResults),
     deletedFeatures: processResults(layer.deleteResults),

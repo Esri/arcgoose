@@ -144,7 +144,7 @@ export class Find {
 
     if (this.findOne) {
       if (features.length !== 1) {
-        throw new Error('Not sure what to throw!'); // Balls are usually suitable objects to throw.
+        throw new Error('Not sure what to throw!');
       }
 
       return features[0];

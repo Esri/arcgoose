@@ -32,7 +32,7 @@ export class ApplyEdits {
   }
 
   delete(idArray) {
-    this.deletes.push(...parseDelete(idArray, '"'));
+    this.deletes.push(...parseDelete(idArray));
     return this;
   }
 
@@ -49,11 +49,12 @@ export class ApplyEdits {
   handle() {
     return {
       serviceUrl: this.featureLayer.serviceUrl,
+      name: this.featureLayer.name,
       payload: {
         id: this.featureLayer.id,
-        adds: this.adds.length ? JSON.stringify(this.adds) : null,
-        updates: this.updates.length ? JSON.stringify(this.updates) : null,
-        deletes: this.deletes.length ? this.deletes.join(',') : null,
+        adds: this.adds.length ? this.adds : null,
+        updates: this.updates.length ? this.updates : null,
+        deletes: this.deletes.length ? this.deletes : null,
       },
     };
   }
@@ -65,7 +66,7 @@ export class ApplyEdits {
       rollbackOnFailure: false,
       adds: this.adds.length ? JSON.stringify(this.adds) : null,
       updates: this.updates.length ? JSON.stringify(this.updates) : null,
-      deletes: this.deletes.length ? this.deletes.join(',') : null,
+      deletes: this.deletes.length ? this.deletes.map(id => `"${id}"`).join(',') : null,
     };
 
     const editsResult = await requestWithRetry(`${this.featureLayer.url}/applyEdits`, {
