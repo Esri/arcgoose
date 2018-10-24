@@ -7,7 +7,6 @@
     "build": "webpack --config webpack.config.prod.js",
     "test": "jest",
     "lint": "./node_modules/.bin/eslint --ext .jsx,.js src/**",
-    "example": "node server",
     "clean": "rimraf dist"
   },
   "author": "Michael Van den Bergh",
