@@ -24,7 +24,7 @@ out of the box.\*
 $ npm install --save arcgoose
 ```
 
-Then, just import to your React component:
+Then, just import to your service or module:
 
 ```jsx
 import arcgoose from 'arcgoose';
