@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "",
   "main": "dist/arcgoose.js",
+  "module": "dist/arcgoose.js",
   "scripts": {
     "build": "webpack --config webpack.config.prod.js",
     "test": "jest",

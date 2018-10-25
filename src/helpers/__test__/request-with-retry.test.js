@@ -16,13 +16,17 @@ describe('request with retry', () => {
     const responseData = { data: '1234' };
     const [request] = await esriLoader.loadModules(['esri/request']);
     request.mockReturnValue(responseData);
-    
+
     const url = 'http://foo.com';
-    const params = { foo: 'bar'};
+    const params = { foo: 'bar' };
     const inputTime = 0;
     const r = await requestWithRetry(url, params, inputTime);
 
-    expect(request).toHaveBeenCalledWith(url, params);
+    expect(request).toHaveBeenCalledWith(url, {
+      foo: 'bar',
+      f: 'json',
+      responseType: 'json',
+    });
     expect(r).toEqual(responseData);
   });
 });

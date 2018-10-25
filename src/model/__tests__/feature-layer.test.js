@@ -28,8 +28,9 @@ describe('Edits', () => {
   it('applies an edit to the attributes of one feature', async () => {
     const layer = new FeatureLayer({
       url: 'http://blabla.com/layer/0',
-      layerId: 'test-layer',
-      schema: { GlobalID: 'string', name: 'string' },
+      serviceUrl: 'http://blabla.com/layer/',
+      id: '0',
+      schema: { GlobalID: String, name: String },
       other: 'stuff',
     });
 
@@ -38,6 +39,7 @@ describe('Edits', () => {
       .exec();
 
     expect(esriLoader.request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
+      f: 'json',
       method: 'post',
       query: {
         f: 'json',
@@ -54,8 +56,9 @@ describe('Edits', () => {
   it('applies an edit to the attributes of several features', async () => {
     const layer = new FeatureLayer({
       url: 'http://blabla.com/layer/0',
-      layerId: 'test-layer',
-      schema: { GlobalID: 'string', name: 'string' },
+      serviceUrl: 'http://blabla.com/layer/',
+      id: '0',
+      schema: { GlobalID: String, name: String },
       other: 'stuff',
     });
 
@@ -67,6 +70,7 @@ describe('Edits', () => {
       .exec();
 
     expect(esriLoader.request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
+      f: 'json',
       method: 'post',
       query: {
         f: 'json',

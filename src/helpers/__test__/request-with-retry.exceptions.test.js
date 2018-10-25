@@ -17,7 +17,6 @@ jest.mock('esri-loader', () => {
 });
 
 describe('request with retry with exceptions', () => {
-
   it('should be able to request with error', async () => {
     const responseData = { data: '1234' };
     const [request] = await esriLoader.loadModules(['esri/request']);
@@ -30,13 +29,17 @@ describe('request with retry with exceptions', () => {
         };
       })
       .mockImplementationOnce(() => responseData);
-    
+
     const url = 'http://foo.com';
-    const params = { foo: 'bar'};
+    const params = { foo: 'bar' };
     const inputTime = 0;
     const r = await requestWithRetry(url, params, inputTime);
 
-    expect(request).toHaveBeenCalledWith(url, params);
+    expect(request).toHaveBeenCalledWith(url, {
+      foo: 'bar',
+      f: 'json',
+      responseType: 'json',
+    });
     expect(r).toEqual(responseData);
   });
 
@@ -52,13 +55,12 @@ describe('request with retry with exceptions', () => {
       });
 
     const url = 'http://foo.com';
-    const params = { foo: 'bar'};
+    const params = { foo: 'bar' };
     const inputTime = 0;
     try {
-      const r = await requestWithRetry(url, params, inputTime);
+      await requestWithRetry(url, params, inputTime);
     } catch (err) {
       expect(err.details.httpStatus).toEqual(999);
     }
   });
-
 });
