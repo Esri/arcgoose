@@ -18,6 +18,18 @@ out of the box.\*
 
 \* Arcgoose is loosely based on the [Mongoose](https://mongoosejs.com) syntax.
 
+## Installing
+
+```
+$ npm install --save arcgoose
+```
+
+Then, just import to your React component:
+
+```jsx
+import arcgoose from 'arcgoose';
+```
+
 ## Instructions
 
 ### Connecting to ArcGIS Feature Server
