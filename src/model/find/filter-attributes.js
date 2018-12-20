@@ -21,52 +21,41 @@ export const castAttributes = (attributes, schema) => {
 
   // parse JSON objects
   Object.keys(newAttributes)
-    .filter(key =>
-      (schema[key] && (schema[key].type === Object || schema[key].type === 'object')),
-    )
+    .filter(key => schema[key])
     .forEach((key) => {
+      // null values should be replaced by defaultValue if present
       if (newAttributes[key] === null) {
         newAttributes[key] = schema[key].defaultValue || null;
         return;
       }
 
+      // some special types need casting
       try {
-        newAttributes[key] = JSON.parse(newAttributes[key]);
+        switch (schema[key].type) {
+          case Object:
+          case 'object': {
+            newAttributes[key] = JSON.parse(newAttributes[key]);
+            break;
+          }
+
+          case Date:
+          case 'date': {
+            newAttributes[key] = new Date(newAttributes[key]);
+            break;
+          }
+
+          case Boolean:
+          case 'boolean': {
+            newAttributes[key] = newAttributes[key] === 1;
+            break;
+          }
+
+          default: {
+            break;
+          }
+        }
       } catch (e) {
         newAttributes[key] = schema[key].defaultValue || null;
-      }
-    });
-
-  // parse dates
-  Object.keys(newAttributes)
-    .filter(key =>
-      (schema[key] && (schema[key].type === Date || schema[key].type === 'date')),
-    )
-    .forEach((key) => {
-      if (newAttributes[key] === null) {
-        newAttributes[key] = schema[key].defaultValue || null;
-        return;
-      }
-
-      try {
-        newAttributes[key] = new Date(newAttributes[key]);
-      } catch (e) {
-        newAttributes[key] = schema[key].defaultValue || null;
-      }
-    });
-
-  // parse booleans
-  Object.keys(newAttributes)
-    .filter(key =>
-      (schema[key] && (schema[key].type === Boolean || schema[key].type === 'boolean')),
-    )
-    .forEach((key) => {
-      if (newAttributes[key] === null) {
-        newAttributes[key] = schema[key].defaultValue || false;
-      } else if (newAttributes[key] === 1) {
-        newAttributes[key] = true;
-      } else {
-        newAttributes[key] = false;
       }
     });
 

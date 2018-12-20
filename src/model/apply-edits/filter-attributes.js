@@ -15,40 +15,44 @@
 
 // takes array of features
 export const castAttributes = (attributes, schema) => {
-  const castJsonAttributes = {};
-  Object.keys(schema)
-    .filter(key => schema[key].type === Object || schema[key].type === 'object')
-    .forEach((key) => {
-      try {
-        castJsonAttributes[key] = JSON.stringify(attributes[key]);
-      } catch (e) {
-        castJsonAttributes[key] = null;
-      }
-    });
+  const castedAttributes = {};
 
-  const castDateAttributes = {};
   Object.keys(schema)
-    .filter(key => schema[key].type === Date || schema[key].type === 'date')
+    // .filter(key => schema[key].type === Object || schema[key].type === 'object')
     .forEach((key) => {
+      // some special types need casting
       try {
-        castDateAttributes[key] = attributes[key].getTime();
-      } catch (e) {
-        castDateAttributes[key] = null;
-      }
-    });
+        switch (schema[key].type) {
+          case Object:
+          case 'object': {
+            castedAttributes[key] = JSON.stringify(attributes[key]);
+            break;
+          }
 
-  const castBooleanAttributes = {};
-  Object.keys(schema)
-    .filter(key => schema[key].type === Boolean || schema[key].type === 'boolean')
-    .forEach((key) => {
-      castBooleanAttributes[key] = attributes[key] ? 1 : 0;
+          case Date:
+          case 'date': {
+            castedAttributes[key] = attributes[key].getTime();
+            break;
+          }
+
+          case Boolean:
+          case 'boolean': {
+            castedAttributes[key] = attributes[key] ? 1 : 0;
+            break;
+          }
+
+          default: {
+            break;
+          }
+        }
+      } catch (e) {
+        castedAttributes[key] = null;
+      }
     });
 
   return {
     ...attributes,
-    ...castJsonAttributes,
-    ...castDateAttributes,
-    ...castBooleanAttributes,
+    ...castedAttributes,
   };
 };
 
