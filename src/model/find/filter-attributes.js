@@ -55,6 +55,21 @@ export const castAttributes = (attributes, schema) => {
       }
     });
 
+  // parse booleans
+  Object.keys(newAttributes)
+    .filter(key =>
+      (schema[key] && (schema[key].type === Boolean || schema[key].type === 'boolean')),
+    )
+    .forEach((key) => {
+      if (newAttributes[key] === null) {
+        newAttributes[key] = schema[key].defaultValue || false;
+      } else if (newAttributes[key] === 1) {
+        newAttributes[key] = true;
+      } else {
+        newAttributes[key] = false;
+      }
+    });
+
   return newAttributes;
 };
 

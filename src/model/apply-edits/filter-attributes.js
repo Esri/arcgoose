@@ -37,10 +37,18 @@ export const castAttributes = (attributes, schema) => {
       }
     });
 
+  const castBooleanAttributes = {};
+  Object.keys(schema)
+    .filter(key => schema[key].type === Boolean || schema[key].type === 'boolean')
+    .forEach((key) => {
+      castBooleanAttributes[key] = attributes[key] ? 1 : 0;
+    });
+
   return {
     ...attributes,
     ...castJsonAttributes,
     ...castDateAttributes,
+    ...castBooleanAttributes,
   };
 };
 
