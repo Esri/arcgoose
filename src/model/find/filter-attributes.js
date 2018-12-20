@@ -25,7 +25,8 @@ export const castAttributes = (attributes, schema) => {
     .forEach((key) => {
       // null values should be replaced by defaultValue if present
       if (newAttributes[key] === null) {
-        newAttributes[key] = schema[key].defaultValue || null;
+        newAttributes[key] =
+          schema[key].defaultValue !== undefined ? schema[key].defaultValue : null;
         return;
       }
 
