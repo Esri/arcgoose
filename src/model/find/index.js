@@ -85,6 +85,11 @@ export class Find {
     return this;
   }
 
+  returnZ() {
+    this.query.returnZ = true;
+    return this;
+  }
+
   returnCentroid() {
     this.query.returnCentroid = true;
     return this;
@@ -127,6 +132,7 @@ export class Find {
       geometryType: this.query.geometryType,
       outFields: this.query.outFields.join(','),
       returnGeometry: this.query.returnGeometry,
+      returnZ: this.query.returnZ,
       returnCentroid: this.query.returnCentroid,
       outSR: this.query.outSR,
       inSR: this.query.inSR,

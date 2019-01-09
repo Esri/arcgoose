@@ -82,7 +82,7 @@ const getChunks = (inputArray) => {
 };
 
 
-export default async (handleArray) => {
+export default async (handleArray, progressCallback) => {
   if (handleArray.length < 1) return null;
 
   const serviceUrl = handleArray[0].serviceUrl;
@@ -108,6 +108,10 @@ export default async (handleArray) => {
     });
 
     editsResultsArray.push(result);
+
+    if (progressCallback) {
+      progressCallback((i + 1) / editChunks.length);
+    }
   }
 
   // TODO: this should handle if layer.id already exists in editsResult
