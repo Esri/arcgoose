@@ -1,4 +1,6 @@
-import esriLoader from 'esri-loader';
+// import esriLoader from 'esri-loader';
+require("isomorphic-fetch");
+require("isomorphic-form-data");
 
 import requestWithRetry from '../request-with-retry';
 
@@ -6,20 +8,21 @@ import {
   REQUEST_RETRY_CODES,
 } from '../../constants';
 
+import { request } from "@esri/arcgis-rest-request";
 
-jest.mock('esri-loader', () => {
-  const request = jest.fn();
+// jest.mock('esri-loader', () => {
+//   const request = jest.fn();
 
-  return {
-    request,
-    loadModules: jest.fn(() => Promise.resolve([request])),
-  };
-});
+//   return {
+//     request,
+//     loadModules: jest.fn(() => Promise.resolve([request])),
+//   };
+// });
 
 describe('request with retry with exceptions', () => {
   it('should be able to request with error', async () => {
     const responseData = { data: '1234' };
-    const [request] = await esriLoader.loadModules(['esri/request']);
+    // const [request] = await esriLoader.loadModules(['esri/request']);
     request
       .mockImplementationOnce(() => {
         throw {
@@ -44,7 +47,7 @@ describe('request with retry with exceptions', () => {
   });
 
   it('should not be able to request with other errors', async () => {
-    const [request] = await esriLoader.loadModules(['esri/request']);
+    // const [request] = await esriLoader.loadModules(['esri/request']);
     request
       .mockImplementationOnce(() => {
         throw {

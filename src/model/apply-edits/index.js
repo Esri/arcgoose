@@ -76,7 +76,6 @@ export class ApplyEdits {
 
   async exec() {
     const query = {
-      f: 'json',
       useGlobalIds: this.useGlobalIds,
       rollbackOnFailure: false,
       adds: this.adds.length ? JSON.stringify(this.adds) : null,
@@ -85,19 +84,17 @@ export class ApplyEdits {
     };
 
     const editsResult = await requestWithRetry(`${this.featureLayer.url}/applyEdits`, {
-      query,
-      method: 'post',
-      responseType: 'json',
+      query
     });
 
     /* TODO: handle missing data field */
 
     return {
       layerId: this.featureLayer.id,
-      addedFeatures: processResults(editsResult.data.addResults),
-      updatedFeatures: processResults(editsResult.data.updateResults),
-      deletedFeatures: processResults(editsResult.data.deleteResults),
-      addedOIDs: processResultsOIDs(editsResult.data.addResults),
+      addedFeatures: processResults(editsResult.addResults),
+      updatedFeatures: processResults(editsResult.updateResults),
+      deletedFeatures: processResults(editsResult.deleteResults),
+      addedOIDs: processResultsOIDs(editsResult.addResults),
     };
   }
 }

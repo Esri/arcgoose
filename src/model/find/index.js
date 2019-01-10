@@ -124,7 +124,6 @@ export class Find {
 
   async exec() {
     const query = {
-      f: 'json',
       where: this.query.filters
         .map(filter => `(${filter})`)
         .join(' AND ') || '1=1',
@@ -143,23 +142,19 @@ export class Find {
       groupByFieldsForStatistics: this.query.groupByFieldsForStatistics,
     };
 
-    const findResult = await requestWithRetry(`${this.featureLayer.url}/query`, {
-      query,
-      method: 'get',
-      responseType: 'json',
-    });
+    const findResult = await requestWithRetry(`${this.featureLayer.url}/query`, query);
 
-    const features = findResult.data.features.map(({ attributes, geometry, centroid }) => ({
+    const features = findResult.features.map(({ attributes, geometry, centroid }) => ({
       attributes: filterAttributes(attributes, this.schema),
       geometry: this.query.returnGeometry ? {
         ...geometry,
         spatialReference: {
-          ...findResult.data.spatialReference,
+          ...findResult.spatialReference,
         },
       } : null,
       centroid: this.query.returnCentroid ? {
         ...centroid,
-        spatialReference: findResult.data.spatialReference,
+        spatialReference: findResult.spatialReference,
       } : null,
     }));
 

@@ -1,7 +1,6 @@
-import esriLoader from 'esri-loader';
+// import esriLoader from 'esri-loader';
 
 import FeatureLayer from '../feature-layer';
-
 
 jest.mock('esri/layers/FeatureLayer', () => {
   const EsriFeatureLayerMock = jest.fn();
@@ -11,12 +10,9 @@ jest.mock('esri/layers/FeatureLayer', () => {
 jest.mock('esri-loader', () => {
   const request = jest.fn();
 
-  request.mockImplementation(() => ({ data: 'foobar' }));
+  request.mockImplementation(() => ('foobar'));
 
-  return {
-    request,
-    loadModules: jest.fn(() => Promise.resolve([request])),
-  };
+  return { request };
 });
 
 // jest.mock('esri/request',
@@ -38,18 +34,12 @@ describe('Edits', () => {
       .update({ attributes: { GlobalID: '1', name: 'New Name' } })
       .exec();
 
-    expect(esriLoader.request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
-      f: 'json',
-      method: 'post',
-      query: {
-        f: 'json',
-        useGlobalIds: true,
-        rollbackOnFailure: false,
-        adds: null,
-        updates: '[{"attributes":{"GlobalID":"1","name":"New Name"}}]',
-        deletes: null,
-      },
-      responseType: 'json',
+    expect(request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
+      useGlobalIds: true,
+      rollbackOnFailure: false,
+      adds: null,
+      updates: '[{"attributes":{"GlobalID":"1","name":"New Name"}}]',
+      deletes: null
     });
   });
 
@@ -69,18 +59,12 @@ describe('Edits', () => {
       ])
       .exec();
 
-    expect(esriLoader.request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
-      f: 'json',
-      method: 'post',
-      query: {
-        f: 'json',
-        useGlobalIds: true,
-        rollbackOnFailure: false,
-        adds: null,
-        updates: '[{"attributes":{"GlobalID":"1","name":"New Name 1"}},{"attributes":{"GlobalID":"2","name":"New Name 2"}}]',
-        deletes: null,
-      },
-      responseType: 'json',
+    expect(request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
+      useGlobalIds: true,
+      rollbackOnFailure: false,
+      adds: null,
+      updates: '[{"attributes":{"GlobalID":"1","name":"New Name 1"}},{"attributes":{"GlobalID":"2","name":"New Name 2"}}]',
+      deletes: null,
     });
   });
 });

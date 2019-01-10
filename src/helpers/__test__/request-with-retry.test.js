@@ -1,6 +1,8 @@
-import esriLoader from 'esri-loader';
+// import esriLoader from 'esri-loader';
 
 import requestWithRetry from '../request-with-retry';
+
+import { request } from "@esri/arcgis-rest-request";
 
 jest.mock('esri-loader', () => {
   const request = jest.fn();
@@ -13,8 +15,8 @@ jest.mock('esri-loader', () => {
 
 describe('request with retry', () => {
   it('should be able to request without exception', async () => {
-    const responseData = { data: '1234' };
-    const [request] = await esriLoader.loadModules(['esri/request']);
+    const responseData = '1234';
+    // const [request] = await esriLoader.loadModules(['esri/request']);
     request.mockReturnValue(responseData);
 
     const url = 'http://foo.com';
@@ -23,9 +25,7 @@ describe('request with retry', () => {
     const r = await requestWithRetry(url, params, inputTime);
 
     expect(request).toHaveBeenCalledWith(url, {
-      foo: 'bar',
-      f: 'json',
-      responseType: 'json',
+      foo: 'bar'
     });
     expect(r).toEqual(responseData);
   });

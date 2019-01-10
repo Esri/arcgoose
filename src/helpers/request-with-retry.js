@@ -1,4 +1,4 @@
-/* Copyright 2018 Esri
+/* Copyright 2018-2019 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,13 +13,16 @@
  * limitations under the License.
  */
 
-import esriLoader from 'esri-loader';
+// import esriLoader from 'esri-loader';
+require("isomorphic-fetch");
+require("isomorphic-form-data");
 
 import {
   REQUEST_MAX_RETRIES,
   REQUEST_RETRY_CODES,
 } from '../constants';
 
+import { request } from "@esri/arcgis-rest-request";
 
 const wait = timeout => new Promise((resolve) => {
   setTimeout(() => {
@@ -30,14 +33,8 @@ const wait = timeout => new Promise((resolve) => {
 
 export const requestWithRetry = async (url, params, inputTime) => {
   const time = inputTime ? inputTime + 1 : 1;
-  const [request] = await esriLoader.loadModules(['esri/request']);
-
   try {
-    return await request(url, {
-      ...params,
-      f: 'json',
-      responseType: 'json',
-    });
+    return await request(url, { params });
   } catch (err) {
     console.error(err);
     if ((err.details && !REQUEST_RETRY_CODES.includes(err.details.httpStatus)) ||
