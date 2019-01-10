@@ -19,6 +19,7 @@ export const castAttributes = (attributes, schema) => {
 
   Object.keys(schema)
     // .filter(key => schema[key].type === Object || schema[key].type === 'object')
+    .filter(key => attributes[key] !== undefined)
     .forEach((key) => {
       // some special types need casting
       try {
