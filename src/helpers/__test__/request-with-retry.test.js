@@ -1,17 +1,11 @@
-// import esriLoader from 'esri-loader';
-
 import requestWithRetry from '../request-with-retry';
 
 import { request } from "@esri/arcgis-rest-request";
 
-jest.mock('esri-loader', () => {
-  const request = jest.fn();
-
-  return {
-    request,
-    loadModules: jest.fn(() => Promise.resolve([request])),
-  };
-});
+jest.mock('request',
+  () => jest.fn().mockImplementation(() => ({ foo: 'bar' })),
+  { virtual: true },
+);
 
 describe('request with retry', () => {
   it('should be able to request without exception', async () => {

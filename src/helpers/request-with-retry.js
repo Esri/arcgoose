@@ -13,10 +13,6 @@
  * limitations under the License.
  */
 
-// import esriLoader from 'esri-loader';
-require("isomorphic-fetch");
-require("isomorphic-form-data");
-
 import {
   REQUEST_MAX_RETRIES,
   REQUEST_RETRY_CODES,

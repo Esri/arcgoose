@@ -1,5 +1,3 @@
-// import esriLoader from 'esri-loader';
-
 import FeatureLayer from '../feature-layer';
 
 jest.mock('esri/layers/FeatureLayer', () => {
@@ -7,18 +5,11 @@ jest.mock('esri/layers/FeatureLayer', () => {
   return EsriFeatureLayerMock;
 }, { virtual: true });
 
-jest.mock('esri-loader', () => {
-  const request = jest.fn();
 
-  request.mockImplementation(() => ('foobar'));
-
-  return { request };
-});
-
-// jest.mock('esri/request',
-//   () => jest.fn().mockImplementation(() => ({ data: 'blab' })),
-//   { virtual: true },
-// );
+jest.mock('request',
+  () => jest.fn().mockImplementation(() => ({ foo: 'bar' })),
+  { virtual: true },
+);
 
 describe('Edits', () => {
   it('applies an edit to the attributes of one feature', async () => {
