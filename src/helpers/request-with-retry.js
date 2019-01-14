@@ -39,16 +39,17 @@ export const requestWithRetry = async (url, params, inputTime) => {
       responseType: 'json',
     });
   } catch (err) {
-    console.error(err);
-    if ((err.details && !REQUEST_RETRY_CODES.includes(err.details.httpStatus)) ||
-      time > REQUEST_MAX_RETRIES) {
-      throw (err);
+    console.log(err);
+
+    if (time > REQUEST_MAX_RETRIES) throw (err);
+
+    if (err.message === 'Timeout exceeded' || REQUEST_RETRY_CODES.includes(err.details.httpStatus)) {
+      console.log(`ArcGoose: waiting ${2 ** time} ms before retrying query...`);
+      await wait(2 ** time);
+      return requestWithRetry(url, params, time);
     }
 
-    // console.log(`ArcGoose: waiting ${2 ** time} before retrying query...`);
-
-    await wait(2 ** time);
-    return requestWithRetry(url, params, time);
+    throw (err);
   }
 };
 
