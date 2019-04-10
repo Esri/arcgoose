@@ -150,7 +150,7 @@ export class Find {
     });
 
     const features = findResult.data.features.map(({ attributes, geometry, centroid }) => ({
-      attributes: filterAttributes(attributes, this.schema),
+      attributes: this.query.outStatistics ? attributes : filterAttributes(attributes, this.schema),
       geometry: this.query.returnGeometry ? {
         ...geometry,
         spatialReference: {
