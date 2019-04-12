@@ -62,6 +62,9 @@ export class FeatureLayer {
     return new ApplyEdits(this, this.schema);
   }
 
+  deleteWhere(where) {
+    return ApplyEdits.deleteWhere(this, where);
+  }
 }
 
 export default FeatureLayer;

@@ -27,6 +27,22 @@ import {
 } from '../../helpers/request-with-retry';
 
 export class ApplyEdits {
+  static async deleteWhere(featureLayer, where) {
+    const editsResult = await requestWithRetry(`${featureLayer.url}/deleteFeatures`, {
+      query: {
+        f: 'json',
+        where,
+      },
+      method: 'post',
+      responseType: 'json',
+    });
+
+    return {
+      layerId: featureLayer.id,
+      deletedFeatures: processResults(editsResult.data.deleteResults),
+    };
+  }
+
   constructor(featureLayer, schema) {
     this.featureLayer = featureLayer;
     this.schema = schema;
