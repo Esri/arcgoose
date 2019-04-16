@@ -150,7 +150,15 @@ export class Find {
     });
 
     const features = findResult.data.features.map(({ attributes, geometry, centroid }) => ({
-      attributes: this.query.outStatistics ? attributes : filterAttributes(attributes, this.schema),
+      attributes: this.query.outStatistics ?
+        attributes :
+        filterAttributes(attributes, {
+          ...this.schema,
+          [this.featureLayer.objectIdField]: {
+            type: Number,
+            alias: 'esriObjectId',
+          },
+        }),
       geometry: this.query.returnGeometry ? {
         ...geometry,
         spatialReference: {
