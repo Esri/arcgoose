@@ -16,9 +16,11 @@
 import connect from './connect';
 import model from './model';
 import execAll from './model/exec-all';
+import typings from './typings'
 
 export default {
   connect,
   model,
   execAll,
+  typings
 };
