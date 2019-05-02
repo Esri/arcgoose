@@ -37,6 +37,7 @@ declare module 'arcgoose' {
         geometry(geometry, geometryType): Find<T>
         intersects(): Find<T>
         limit(amount: number): Find<T>
+        offset(amount: number): Find<T>
         outSpatialReference(wkid: number): Find<T>
         outStatistics(
             outStatistics: OutStatistics<T>[],
@@ -106,7 +107,7 @@ declare module 'arcgoose' {
 
     export function model<T>(info: Info, schema: Schema): Promise<Model<T>>;
 
-    export function executeAll(handles: Handle[], progressCallback: (percentage: number) => void): Promise<Array<ApplyEditsResult>>
+    export function execAll(handles: Handle[], progressCallback: (percentage: number) => void): Promise<Array<ApplyEditsResult>>
 
     export function typings(connection: Connection): string
 }

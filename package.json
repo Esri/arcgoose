@@ -10,6 +10,9 @@
     "lint": "./node_modules/.bin/eslint --ext .jsx,.js src/**",
     "clean": "rimraf dist"
   },
+  "bin": {
+    "arcgoose-typings": "src/typings/cli.js"
+  },
   "author": "Michael Van den Bergh",
   "license": "MIT",
   "devDependencies": {
@@ -34,6 +37,7 @@
   "dependencies": {
     "babel-loader": "^7.1.2",
     "babel-minify-webpack-plugin": "^0.3.0",
+    "commander": "^2.20.0",
     "esri-loader": "^2.4.0",
     "idempotent-babel-polyfill": "^0.1.1",
     "webpack": "^3.12.0"

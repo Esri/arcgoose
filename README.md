@@ -208,6 +208,62 @@ const mouseHandle = Mouse.applyEdits().add({ name: 'Jerry' }).handle();
 arcgoose.execAll([catHandle, mouseHandle]);
 ```
 
+### Types
+
+Use `npx arcgoose-typings <FeatureServiceURL> <OutputFileName.ts>` to create TypeScript Interfaces which match your FeatureService and can be used with arcgoose.
+
+Create a Model.ts Definition File (include Token for secured Services)
+```bash
+npx arcgoose-typings http://sampleserver6.arcgisonline.com/arcgis/rest/services/Energy/Geology/FeatureServer Model.ts
+```
+
+You have following additional options:
+ - `--include-docs` Adds some TS-Doc Information from ArcGIS
+ ![Docs](media/docs.gif)
+
+ - `--use-alias`: uses all Field-Aliases instead of field-names. Can get ugly if your feature-service has 'nice' Aliases
+ ```typescript
+// with --use-alias
+interface FeatureLayer {
+  "Employe ID": string
+}
+
+let value = feature.attributes["Employe ID"]
+
+// wihtout --use-alias
+interface FeatureLayer{
+  employe_id: string
+}
+let value = feature.attributes.employe_id
+ ```
+
+#### Hands on
+Import arcgoose and your Model
+```typescript
+import arcgoose from 'arcgoose'
+import * as Model from './Model'
+```
+
+Setup a connection 
+```typescript
+const url = 'http://sampleserver6.arcgisonline.com/arcgis/rest/services/Energy/Geology/FeatureServer'
+
+const connection = await arcgoose.connect<Model.ServiceDefinition>({ url })
+```
+
+Get access to your FeatureLayer 
+```typescript
+const faultModel = 
+await arcgoose.model<Model.FaultPoint>(
+  connection.layers["Fault (Point)"], 
+  Model.faultPointSchema
+)
+```
+
+Enjoy typings
+
+![Types](media/types.gif)
+
 ## Issues
 
 Find a bug or want to request a new feature?  Please let us know by submitting an issue.
