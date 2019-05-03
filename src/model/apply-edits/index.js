@@ -49,7 +49,7 @@ export class ApplyEdits {
     this.adds = [];
     this.deletes = [];
     this.updates = [];
-    this.useGlobalIds = true;
+    this._useGlobalIds = true;
   }
 
   add(features) {
@@ -68,12 +68,12 @@ export class ApplyEdits {
   }
 
   useGlobalIds() {
-    this.useGlobalIds = true;
+    this._useGlobalIds = true;
     return this;
   }
 
   useObjectIds() {
-    this.useGlobalIds = false;
+    this._useGlobalIds = false;
     return this;
   }
 
@@ -91,13 +91,23 @@ export class ApplyEdits {
   }
 
   async exec() {
+
+    let deleteIds = null
+    if (this.deletes.length) {
+      if (this._useGlobalIds) {
+        deleteIds = this.deletes.map(id => `"${id}"`).join(',');
+      } else {
+        deleteIds = this.deletes.map(id => `${id}`).join(',');
+      }
+    }
+
     const query = {
       f: 'json',
-      useGlobalIds: this.useGlobalIds,
+      useGlobalIds: this._useGlobalIds,
       rollbackOnFailure: false,
       adds: this.adds.length ? JSON.stringify(this.adds) : null,
       updates: this.updates.length ? JSON.stringify(this.updates) : null,
-      deletes: this.deletes.length ? this.deletes.map(id => `"${id}"`).join(',') : null,
+      deletes: deleteIds,
     };
 
     const editsResult = await requestWithRetry(`${this.featureLayer.url}/applyEdits`, {
