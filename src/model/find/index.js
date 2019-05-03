@@ -43,6 +43,7 @@ export class Find {
       returnCentroid: false,
       inSR: 4326,
       outSR: 4326,
+      ignoreServiceLimit: false
     };
     this.findOne = !!findOne;
     this.schema = schema;
@@ -110,8 +111,8 @@ export class Find {
   }
 
   offset(amount) {
-    if(amount && amount > 0) {
-      this.query.resultOffset = amount
+    if (amount && amount > 0) {
+      this.query.resultOffset = amount;
     }
     return this;
   }
@@ -127,6 +128,11 @@ export class Find {
     this.query.outStatistics = outStatistics;
     this.query.groupByFieldsForStatistics = groupByFieldsForStatistics;
     return this;
+  }
+
+  ignoreServiceLimit() {
+      this.query.ignoreServiceLimit = true;
+      return this;
   }
 
   async exec() {
@@ -151,13 +157,44 @@ export class Find {
       groupByFieldsForStatistics: this.query.groupByFieldsForStatistics,
     };
 
-    const findResult = await requestWithRetry(`${this.featureLayer.url}/query`, {
-      query,
-      method: 'get',
-      responseType: 'json',
-    });
+    let exceededTransferLimit = true;
+    const allFeatures = [];
 
-    const features = findResult.data.features.map(({ attributes, geometry, centroid }) => ({
+    while(exceededTransferLimit) {
+      const findResult = await requestWithRetry(`${this.featureLayer.url}/query`, {
+        query,
+        method: 'get',
+        responseType: 'json',
+      });
+
+      allFeatures.push(...findResult.data.features);
+      
+      if (!this.query.ignoreServiceLimit) break;
+
+      
+      exceededTransferLimit = findResult.data.exceededTransferLimit === true;
+
+      if (exceededTransferLimit) {
+        const featureCount = findResult.data.features.length;
+
+        // subtracting already fetched feature count, if a .limit was set
+        if (query.resultRecordCount > 0) {
+          query.resultRecordCount -= featureCount;
+
+          if (query.resultRecordCount <= 0) break;
+        }
+
+
+        if (isNaN(query.resultOffset)) {
+          query.resultOffset = 0;
+        }
+
+        query.resultOffset += featureCount;
+
+      }
+    }
+
+    const features = allFeatures.map(({ attributes, geometry, centroid }) => ({
       attributes: this.query.outStatistics ? attributes : filterAttributes(attributes, this.schema),
       geometry: this.query.returnGeometry ? {
         ...geometry,
