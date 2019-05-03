@@ -109,13 +109,6 @@ export class Find {
     return this;
   }
 
-  offset(amount) {
-    if(amount && amount > 0) {
-      this.query.resultOffset = amount
-    }
-    return this;
-  }
-
   limit(amount) {
     if (amount && amount > 0) {
       this.query.resultRecordCount = amount;
@@ -145,7 +138,6 @@ export class Find {
       inSR: this.query.inSR,
       spatialRel: this.query.spatialRel,
       orderByFields: this.query.orderByFields,
-      resultOffset: this.query.resultOffset,
       resultRecordCount: this.query.resultRecordCount,
       outStatistics: JSON.stringify(this.query.outStatistics),
       groupByFieldsForStatistics: this.query.groupByFieldsForStatistics,
