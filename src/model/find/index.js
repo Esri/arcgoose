@@ -157,42 +157,7 @@ export class Find {
       groupByFieldsForStatistics: this.query.groupByFieldsForStatistics,
     };
 
-    let exceededTransferLimit = true;
-    const allFeatures = [];
-
-    while(exceededTransferLimit) {
-      const findResult = await requestWithRetry(`${this.featureLayer.url}/query`, {
-        query,
-        method: 'get',
-        responseType: 'json',
-      });
-
-      allFeatures.push(...findResult.data.features);
-      
-      if (!this.query.ignoreServiceLimit) break;
-
-      
-      exceededTransferLimit = findResult.data.exceededTransferLimit === true;
-
-      if (exceededTransferLimit) {
-        const featureCount = findResult.data.features.length;
-
-        // subtracting already fetched feature count, if a .limit was set
-        if (query.resultRecordCount > 0) {
-          query.resultRecordCount -= featureCount;
-
-          if (query.resultRecordCount <= 0) break;
-        }
-
-
-        if (isNaN(query.resultOffset)) {
-          query.resultOffset = 0;
-        }
-
-        query.resultOffset += featureCount;
-
-      }
-    }
+    const allFeatures = await this.fetchPagedFeatures(query)
 
     const features = allFeatures.map(({ attributes, geometry, centroid }) => ({
       attributes: this.query.outStatistics ? attributes : filterAttributes(attributes, this.schema),
@@ -217,6 +182,45 @@ export class Find {
     }
 
     return features;
+  }
+
+  async fetchPagedFeatures(query) {
+    
+    let exceededTransferLimit = true;
+    const allFeatures = [];
+
+    while(exceededTransferLimit) {
+      const findResult = await requestWithRetry(`${this.featureLayer.url}/query`, {
+        query,
+        method: 'get',
+        responseType: 'json',
+      });
+
+      allFeatures.push(...findResult.data.features);
+      
+      if (!this.query.ignoreServiceLimit) break;
+      
+      exceededTransferLimit = findResult.data.exceededTransferLimit === true;
+
+      if (exceededTransferLimit) {
+        const featureCount = findResult.data.features.length;
+
+        // subtracting already fetched feature count, if a .limit was set
+        if (query.resultRecordCount > 0) {
+          query.resultRecordCount -= featureCount;
+
+          if (query.resultRecordCount <= 0) break;
+        }
+
+        if (isNaN(query.resultOffset)) {
+          query.resultOffset = 0;
+        }
+
+        query.resultOffset += featureCount;
+      }
+    }
+
+    return allFeatures;
   }
 }
 
