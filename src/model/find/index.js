@@ -135,6 +135,11 @@ export class Find {
       return this;
   }
 
+  returnCountOnly() {
+    this.query.returnCountOnly = true;
+    return this;
+  }
+
   async exec() {
     const query = {
       f: 'json',
@@ -154,13 +159,26 @@ export class Find {
       resultOffset: this.query.resultOffset,
       resultRecordCount: this.query.resultRecordCount,
       outStatistics: JSON.stringify(this.query.outStatistics),
+      returnCountOnly: this.query.returnCountOnly,
       groupByFieldsForStatistics: this.query.groupByFieldsForStatistics,
     };
 
-    const allFeatures = await this.fetchPagedFeatures(query)
+    const featureData = await this.fetchPagedFeatures(query)
 
-    const features = allFeatures.map(({ attributes, geometry, centroid }) => ({
-      attributes: this.query.outStatistics ? attributes : filterAttributes(attributes, this.schema),
+    if (this.query.returnCountOnly) {
+      return featureData;
+    }
+
+    const features = featureData.map(({ attributes, geometry, centroid }) => ({
+      attributes: this.query.outStatistics ?
+        attributes :
+        filterAttributes(attributes, {
+          ...this.schema,
+          [this.featureLayer.objectIdField]: {
+            type: Number,
+            alias: 'esriObjectId',
+          },
+        }),
       geometry: this.query.returnGeometry ? {
         ...geometry,
         spatialReference: {
@@ -195,6 +213,10 @@ export class Find {
         method: 'get',
         responseType: 'json',
       });
+
+      if (query.returnCountOnly) {
+        return findResult.data
+      }
 
       allFeatures.push(...findResult.data.features);
       

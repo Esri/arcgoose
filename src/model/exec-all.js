@@ -23,7 +23,7 @@ import {
 } from './apply-edits/process-results';
 
 
-const CHUNK_SIZE = 666;
+const CHUNK_SIZE = 500;
 
 const flattenEditHandles = (handleArray) => {
   const editsArray = [];
