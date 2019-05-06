@@ -163,6 +163,10 @@ export class Find {
       responseType: 'json',
     });
 
+    if (this.query.returnCountOnly) {
+      return findResult.data;
+    }
+
     const features = findResult.data.features.map(({ attributes, geometry, centroid }) => ({
       attributes: this.query.outStatistics ?
         attributes :
