@@ -153,11 +153,19 @@ Here is a list of additional query methods:
 ```
 
 ```javascript
+.offset(amount)
+```
+
+```javascript
 .limit(amount)
 ```
 
 ```javascript
 .outStatistics(outStatistics, groupByFieldsForStatistics)
+```
+
+```javascript
+.returnCountOnly()
 ```
 
 ### Edits

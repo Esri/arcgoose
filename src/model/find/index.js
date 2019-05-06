@@ -109,6 +109,13 @@ export class Find {
     return this;
   }
 
+  offset(amount) {
+    if (amount && amount > 0) {
+      this.query.resultOffset = amount;
+    }
+    return this;
+  }
+
   limit(amount) {
     if (amount && amount > 0) {
       this.query.resultRecordCount = amount;
@@ -119,6 +126,11 @@ export class Find {
   outStatistics(outStatistics, groupByFieldsForStatistics) {
     this.query.outStatistics = outStatistics;
     this.query.groupByFieldsForStatistics = groupByFieldsForStatistics;
+    return this;
+  }
+
+  returnCountOnly() {
+    this.query.returnCountOnly = true;
     return this;
   }
 
@@ -138,8 +150,10 @@ export class Find {
       inSR: this.query.inSR,
       spatialRel: this.query.spatialRel,
       orderByFields: this.query.orderByFields,
+      resultOffset: this.query.resultOffset,
       resultRecordCount: this.query.resultRecordCount,
       outStatistics: JSON.stringify(this.query.outStatistics),
+      returnCountOnly: this.query.returnCountOnly,
       groupByFieldsForStatistics: this.query.groupByFieldsForStatistics,
     };
 
@@ -149,8 +163,20 @@ export class Find {
       responseType: 'json',
     });
 
+    if (this.query.returnCountOnly) {
+      return findResult.data;
+    }
+
     const features = findResult.data.features.map(({ attributes, geometry, centroid }) => ({
-      attributes: this.query.outStatistics ? attributes : filterAttributes(attributes, this.schema),
+      attributes: this.query.outStatistics ?
+        attributes :
+        filterAttributes(attributes, {
+          ...this.schema,
+          [this.featureLayer.objectIdField]: {
+            type: Number,
+            alias: 'esriObjectId',
+          },
+        }),
       geometry: this.query.returnGeometry ? {
         ...geometry,
         spatialReference: {
