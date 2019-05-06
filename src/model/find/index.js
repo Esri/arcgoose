@@ -129,6 +129,11 @@ export class Find {
     return this;
   }
 
+  returnCountOnly() {
+    this.query.returnCountOnly = true;
+    return this;
+  }
+
   async exec() {
     const query = {
       f: 'json',
@@ -148,6 +153,7 @@ export class Find {
       resultOffset: this.query.resultOffset,
       resultRecordCount: this.query.resultRecordCount,
       outStatistics: JSON.stringify(this.query.outStatistics),
+      returnCountOnly: this.query.returnCountOnly,
       groupByFieldsForStatistics: this.query.groupByFieldsForStatistics,
     };
 

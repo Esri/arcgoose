@@ -164,6 +164,10 @@ Here is a list of additional query methods:
 .outStatistics(outStatistics, groupByFieldsForStatistics)
 ```
 
+```javascript
+.returnCountOnly()
+```
+
 ### Edits
 
 Edits can be applied using the `applyEdits()` method.
