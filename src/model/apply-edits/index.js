@@ -49,7 +49,7 @@ export class ApplyEdits {
     this.adds = [];
     this.deletes = [];
     this.updates = [];
-    this._useGlobalIds = true;
+    this.shouldUseGlobalIds = true;
   }
 
   add(features) {
@@ -68,12 +68,12 @@ export class ApplyEdits {
   }
 
   useGlobalIds() {
-    this._useGlobalIds = true;
+    this.shouldUseGlobalIds = true;
     return this;
   }
 
   useObjectIds() {
-    this._useGlobalIds = false;
+    this.shouldUseGlobalIds = false;
     return this;
   }
 
@@ -94,7 +94,7 @@ export class ApplyEdits {
 
     let deleteIds = null
     if (this.deletes.length) {
-      if (this._useGlobalIds) {
+      if (this.shouldUseGlobalIds) {
         deleteIds = this.deletes.map(id => `"${id}"`).join(',');
       } else {
         deleteIds = this.deletes.map(id => `${id}`).join(',');
@@ -103,7 +103,7 @@ export class ApplyEdits {
 
     const query = {
       f: 'json',
-      useGlobalIds: this._useGlobalIds,
+      useGlobalIds: this.shouldUseGlobalIds,
       rollbackOnFailure: false,
       adds: this.adds.length ? JSON.stringify(this.adds) : null,
       updates: this.updates.length ? JSON.stringify(this.updates) : null,
