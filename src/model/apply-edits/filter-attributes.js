@@ -26,7 +26,8 @@ export const castAttributes = (attributes, schema) => {
         switch (schema[key].type) {
           case Object:
           case 'object': {
-            castedAttributes[key] = JSON.stringify(attributes[key]);
+            castedAttributes[key] =
+              attributes[key] !== null ? JSON.stringify(attributes[key]) : null;
             break;
           }
 
