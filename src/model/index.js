@@ -17,13 +17,13 @@ import FeatureLayer from './feature-layer';
 import FeatureTable from './feature-table';
 
 
-export default ({ type, url, serviceUrl, id, name }, schema) => {
+export default ({ type, url, serviceUrl, id, name, objectIdField }, schema) => {
   if (type === 'Feature Layer') {
-    return new FeatureLayer({ url, serviceUrl, id, name, schema });
+    return new FeatureLayer({ url, serviceUrl, id, name, schema, objectIdField });
   }
 
   if (type === 'Table') {
-    return new FeatureTable({ url, serviceUrl, id, name, schema });
+    return new FeatureTable({ url, serviceUrl, id, name, schema, objectIdField });
   }
 
   return null;
