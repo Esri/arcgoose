@@ -91,8 +91,7 @@ export class ApplyEdits {
   }
 
   async exec() {
-
-    let deleteIds = null
+    let deleteIds = null;
     if (this.deletes.length) {
       if (this.shouldUseGlobalIds) {
         deleteIds = this.deletes.map(id => `"${id}"`).join(',');
