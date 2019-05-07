@@ -171,11 +171,11 @@ export class Find {
       attributes: this.query.outStatistics ?
         attributes :
         filterAttributes(attributes, {
-          ...this.schema,
           [this.featureLayer.objectIdField]: {
             type: Number,
             alias: 'esriObjectId',
           },
+          ...this.schema,
         }),
       geometry: this.query.returnGeometry ? {
         ...geometry,
