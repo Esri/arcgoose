@@ -19,9 +19,8 @@ import {
 } from './filter-attributes';
 
 import {
-  requestWithRetry,
-} from '../../helpers/request-with-retry';
-
+  fetchPagedFeatures,
+} from './fetch-paged-features';
 
 const fromAlias = (fieldName, schema) => {
   if (!schema) return fieldName;
@@ -43,7 +42,7 @@ export class Find {
       returnCentroid: false,
       inSR: 4326,
       outSR: 4326,
-      ignoreServiceLimit: false
+      ignoreServiceLimit: false,
     };
     this.findOne = !!findOne;
     this.schema = schema;
@@ -131,8 +130,8 @@ export class Find {
   }
 
   ignoreServiceLimit() {
-      this.query.ignoreServiceLimit = true;
-      return this;
+    this.query.ignoreServiceLimit = true;
+    return this;
   }
 
   returnCountOnly() {
@@ -163,13 +162,17 @@ export class Find {
       groupByFieldsForStatistics: this.query.groupByFieldsForStatistics,
     };
 
-    const featureData = await this.fetchPagedFeatures(query)
+    const featureData = await fetchPagedFeatures({
+      featureLayerUrl: this.featureLayer.url,
+      query,
+      ignoreServiceLimit: this.query.ignoreServiceLimit,
+    });
 
     if (this.query.returnCountOnly) {
       return featureData;
     }
 
-    const features = featureData.map(({ attributes, geometry, centroid }) => ({
+    const features = featureData.allFeatures.map(({ attributes, geometry, centroid }) => ({
       attributes: this.query.outStatistics ?
         attributes :
         filterAttributes(attributes, {
@@ -182,12 +185,12 @@ export class Find {
       geometry: this.query.returnGeometry ? {
         ...geometry,
         spatialReference: {
-          ...findResult.data.spatialReference,
+          ...featureData.spatialReference,
         },
       } : null,
       centroid: this.query.returnCentroid ? {
         ...centroid,
-        spatialReference: findResult.data.spatialReference,
+        spatialReference: featureData.spatialReference,
       } : null,
     }));
 
@@ -200,49 +203,6 @@ export class Find {
     }
 
     return features;
-  }
-
-  async fetchPagedFeatures(query) {
-    
-    let exceededTransferLimit = true;
-    const allFeatures = [];
-
-    while(exceededTransferLimit) {
-      const findResult = await requestWithRetry(`${this.featureLayer.url}/query`, {
-        query,
-        method: 'get',
-        responseType: 'json',
-      });
-
-      if (query.returnCountOnly) {
-        return findResult.data
-      }
-
-      allFeatures.push(...findResult.data.features);
-      
-      if (!this.query.ignoreServiceLimit) break;
-      
-      exceededTransferLimit = findResult.data.exceededTransferLimit === true;
-
-      if (exceededTransferLimit) {
-        const featureCount = findResult.data.features.length;
-
-        // subtracting already fetched feature count, if a .limit was set
-        if (query.resultRecordCount > 0) {
-          query.resultRecordCount -= featureCount;
-
-          if (query.resultRecordCount <= 0) break;
-        }
-
-        if (isNaN(query.resultOffset)) {
-          query.resultOffset = 0;
-        }
-
-        query.resultOffset += featureCount;
-      }
-    }
-
-    return allFeatures;
   }
 }
 
