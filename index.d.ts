@@ -53,12 +53,12 @@ declare module 'arcgoose' {
          *   }).exec()
          * ```
          */
-        find(info?: Partial<T>): Find<T>;
+        find(info?: Partial<T>): Find<T, Array<Feature<T>>>;
 
         /**
-         * finds a set of features
+         * finds one feature
          * 
-         * will throw an exception if the resultset does not contain exactly one feature
+         * will throw an exception if the service finds no or more than one features
          * @param info object-based definition to filter features
          * @example ```typescript
          * const features = await model.findOne({
@@ -66,7 +66,7 @@ declare module 'arcgoose' {
          * }).exec()
          * ```
          * */
-        findOne(info?: Partial<T>): Find<T>;
+        findOne(info?: Partial<T>): Find<T, Feature<T>>;
     }
 
     interface Deleted {
@@ -74,52 +74,52 @@ declare module 'arcgoose' {
         deletedFeatures: any[]
     }
 
-    interface Find<T> {
+    interface Find<T, K> {
         /**
          * uses `esriSpatialRelContains` to query by geometry
          */
-        contains(): Find<T>
+        contains(): Find<T, K>
 
         /**
          * executes the query, will resolve when all features are fetched
          */
-        exec(): Promise<Array<Feature<T>>>
+        exec(): Promise<K>
 
         /**
          * adds a where clause, if multiple added, they will be joined with
          * `and`
          */
-        filter(sqlWhere: string): Find<T>
+        filter(sqlWhere: string): Find<T, K>
 
         /**
          * sets the geometry for a spatial query
          * @param geometry ArcGIS Rest Geometry Representation as Object
          * @param geometryType type of the input geometry
          */
-        geometry(geometry, geometryType: 'esriGeometryPoint' | 'esriGeometryMultipoint' | 'esriGeometryPolyline' | 'esriGeometryPolygon' | 'esriGeometryEnvelope'): Find<T>
+        geometry(geometry, geometryType: 'esriGeometryPoint' | 'esriGeometryMultipoint' | 'esriGeometryPolyline' | 'esriGeometryPolygon' | 'esriGeometryEnvelope'): Find<T, K>
         
         /**
          * uses `esriSpatialRelIntersects` to query by geometry
          */
-        intersects(): Find<T>
+        intersects(): Find<T, K>
 
         /**
          * limits the maximal amount of features
          * @param amount maximal count of features to retrieve
          */
-        limit(amount: number): Find<T>
+        limit(amount: number): Find<T, K>
 
         /**
          * sets an offset to use with `.limit`
          * @param amount offset at which feature-count to start
          */
-        offset(amount: number): Find<T>
+        offset(amount: number): Find<T, K>
 
         /**
          * 
          * @param wkid spatial reference of the output features
          */
-        outSpatialReference(wkid: number): Find<T>
+        outSpatialReference(wkid: number): Find<T, K>
 
         /**
          * a definition to aggregate data
@@ -129,28 +129,28 @@ declare module 'arcgoose' {
         outStatistics(
             outStatistics: OutStatistics<T>[],
             groupByFieldsForStatistics: Array<keyof T>
-        ): FindOutStatistic<T> 
+        ): Find<T, Array<any>> 
 
         /**
          * if specified, only these fields will be fetched from the service
          * @param outFields fields to populate in out features
          */
-        populate(outFields: Array<keyof T>): Find<T>
+        populate(outFields: Array<keyof T>): Find<T, K>
 
         /**
          * if set, out features will contain centroids
          */
-        returnCentroid(): Find<T>
+        returnCentroid(): Find<T, K>
 
         /**
          * if set, out features will contain geometries
          */
-        returnGeometry(): Find<T>
+        returnGeometry(): Find<T, K>
 
         /**
          * if set, out features geometries will contain z-values
          */
-        returnZ(): Find<T>
+        returnZ(): Find<T, K>
 
         /**
          * 
@@ -165,7 +165,7 @@ declare module 'arcgoose' {
          */
         sort(sortOrder: {
             [P in keyof T]?: number
-        }): Find<T>
+        }): Find<T, K>
 
         /**
          * same as filter, adds a where clause part.
@@ -173,12 +173,15 @@ declare module 'arcgoose' {
          * all parts are joined with `and`
          * @param sqlFilter where clause
          */
-        where(sqlFilter): Find<T>
+        where(sqlFilter): Find<T, K>
+
+        /**
+         * returns the featureset count
+         */
+        returnCountOnly(): Find<T, {count: number}>
     }
 
-    interface FindOutStatistic<T> extends Find<T> {
-        exec(): Promise<Array<Feature<any>>>
-    }
+ 
 
     interface OutStatistics<T> {
         statisticType: 'count' | 'sum' | 'min' | 'max' | 'avg' | 'stddev' | 'var'
@@ -259,7 +262,7 @@ declare module 'arcgoose' {
      * )
      * ```
      */
-    export function model<T>(info: Info, schema: Schema): Promise<Model<T>>;
+    export function model<T>(info: Info, schema?: Schema): Promise<Model<T>>;
 
     /**
      * uploads a bunch of handles
