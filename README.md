@@ -161,7 +161,16 @@ Here is a list of additional query methods:
 ```
 
 ```javascript
+.offset(amount)
+```
+
+```javascript
 .outStatistics(outStatistics, groupByFieldsForStatistics)
+```
+
+If the query indicates, that the transfer limit was exceeded, more paged queries are executed until all the data has been received.
+```javascript
+.ignoreServiceLimits()
 ```
 
 ```javascript

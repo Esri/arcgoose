@@ -19,9 +19,9 @@ import {
 } from './filter-attributes';
 
 import {
-  requestWithRetry,
-} from '../../helpers/request-with-retry';
-
+  fetchPagedFeatures,
+} from './fetch-paged-features';
+import requestWithRetry from '../../helpers/request-with-retry';
 
 const fromAlias = (fieldName, schema) => {
   if (!schema) return fieldName;
@@ -157,17 +157,20 @@ export class Find {
       groupByFieldsForStatistics: this.query.groupByFieldsForStatistics,
     };
 
-    const findResult = await requestWithRetry(`${this.featureLayer.url}/query`, {
-      query,
-      method: 'get',
-      responseType: 'json',
-    });
+    const queryUrl = `${this.featureLayer.url}/query`;
 
     if (this.query.returnCountOnly) {
-      return findResult.data;
+      const count = await requestWithRetry(queryUrl, {
+        query,
+        method: 'get',
+        responseType: 'json',
+      });
+      return count.data;
     }
 
-    const features = findResult.data.features.map(({ attributes, geometry, centroid }) => ({
+    const featureData = await fetchPagedFeatures(queryUrl, query);
+
+    const features = featureData.features.map(({ attributes, geometry, centroid }) => ({
       attributes: this.query.outStatistics ?
         attributes :
         filterAttributes(attributes, {
@@ -180,12 +183,12 @@ export class Find {
       geometry: this.query.returnGeometry ? {
         ...geometry,
         spatialReference: {
-          ...findResult.data.spatialReference,
+          ...featureData.spatialReference,
         },
       } : null,
       centroid: this.query.returnCentroid ? {
         ...centroid,
-        spatialReference: findResult.data.spatialReference,
+        spatialReference: featureData.spatialReference,
       } : null,
     }));
 
