@@ -28,16 +28,12 @@ const wait = timeout => new Promise((resolve) => {
 });
 
 
-const addCacheRefreshParamToUrl = (url, time) => `${url}${url.includes('&') ? '?' : '&'}cacheRefresh=${time}`;
-
-
 export const requestWithRetry = async (url, params, inputTime) => {
   const time = inputTime ? inputTime + 1 : 1;
   const [request] = await esriLoader.loadModules(['esri/request']);
 
   try {
-    const requestUrl = time > 1 ? addCacheRefreshParamToUrl(url, time) : url;
-    const response = await request(requestUrl, {
+    const response = await request(url, {
       ...params,
       f: 'json',
       responseType: 'json',
