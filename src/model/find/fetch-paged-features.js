@@ -19,50 +19,50 @@ import {
 } from '../../helpers/request-with-retry';
 
 
-export const fetchPagedFeatures = async ({ featureLayerUrl, query, ignoreServiceLimit }) => {
+export const fetchPagedFeatures = async (url, query, inputTime) => {
   let exceededTransferLimit = true;
-  const allFeatures = [];
+  const features = [];
   let spatialReference = null;
+
+  let recordCount = query.resultRecordCount;
+  let offset = query.resultOffset;
 
   while (exceededTransferLimit) {
     // eslint-disable-next-line no-await-in-loop
-    const findResult = await requestWithRetry(`${featureLayerUrl}/query`, {
+    const requestResult = await requestWithRetry(url, {
       query,
       method: 'get',
       responseType: 'json',
-    });
+    }, inputTime);
 
-    if (query.returnCountOnly) {
-      return findResult.data;
-    }
+    const findResult = requestResult.data;
 
-    allFeatures.push(...findResult.data.features);
-    spatialReference = findResult.data.spatialReference;
+    features.push(...findResult.features);
+    spatialReference = findResult.spatialReference;
 
-    if (!ignoreServiceLimit) break;
-
-    exceededTransferLimit = findResult.data.exceededTransferLimit === true;
+    exceededTransferLimit = findResult.exceededTransferLimit === true;
 
     if (exceededTransferLimit) {
-      const featureCount = findResult.data.features.length;
+      const featureCount = findResult.features.length;
 
       // subtracting already fetched feature count, if a .limit was set
-      if (query.resultRecordCount > 0) {
-        query.resultRecordCount -= featureCount;
+      if (recordCount > 0) {
+        recordCount -= featureCount;
 
-        if (query.resultRecordCount <= 0) break;
+        if (recordCount <= 0) break;
       }
 
-      if (isNaN(query.resultOffset)) {
-        query.resultOffset = 0;
-      }
+      if (isNaN(offset)) offset = 0;
 
-      query.resultOffset += featureCount;
+      offset += featureCount;
+
+      query.resultRecordCount = recordCount;
+      query.resultOffset = offset;
     }
   }
 
   return {
-    allFeatures,
+    features,
     spatialReference,
   };
 };

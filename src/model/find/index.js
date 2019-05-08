@@ -21,6 +21,7 @@ import {
 import {
   fetchPagedFeatures,
 } from './fetch-paged-features';
+import requestWithRetry from '../../helpers/request-with-retry';
 
 const fromAlias = (fieldName, schema) => {
   if (!schema) return fieldName;
@@ -42,7 +43,6 @@ export class Find {
       returnCentroid: false,
       inSR: 4326,
       outSR: 4326,
-      ignoreServiceLimit: false,
     };
     this.findOne = !!findOne;
     this.schema = schema;
@@ -129,11 +129,6 @@ export class Find {
     return this;
   }
 
-  ignoreServiceLimit() {
-    this.query.ignoreServiceLimit = true;
-    return this;
-  }
-
   returnCountOnly() {
     this.query.returnCountOnly = true;
     return this;
@@ -162,17 +157,20 @@ export class Find {
       groupByFieldsForStatistics: this.query.groupByFieldsForStatistics,
     };
 
-    const featureData = await fetchPagedFeatures({
-      featureLayerUrl: this.featureLayer.url,
-      query,
-      ignoreServiceLimit: this.query.ignoreServiceLimit,
-    });
+    const queryUrl = `${this.featureLayer.url}/query`;
 
     if (this.query.returnCountOnly) {
-      return featureData;
+      const count = await requestWithRetry(queryUrl, {
+        query,
+        method: 'get',
+        responseType: 'json',
+      });
+      return count.data;
     }
 
-    const features = featureData.allFeatures.map(({ attributes, geometry, centroid }) => ({
+    const featureData = await fetchPagedFeatures(queryUrl, query);
+
+    const features = featureData.features.map(({ attributes, geometry, centroid }) => ({
       attributes: this.query.outStatistics ?
         attributes :
         filterAttributes(attributes, {
