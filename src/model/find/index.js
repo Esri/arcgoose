@@ -21,7 +21,11 @@ import {
 import {
   fetchPagedFeatures,
 } from './fetch-paged-features';
-import requestWithRetry from '../../helpers/request-with-retry';
+
+import {
+  requestWithRetry,
+} from '../../helpers/request-with-retry';
+
 
 const fromAlias = (fieldName, schema) => {
   if (!schema) return fieldName;
