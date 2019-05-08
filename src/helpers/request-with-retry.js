@@ -28,22 +28,40 @@ const wait = timeout => new Promise((resolve) => {
 });
 
 
+const addCacheRefreshParamToUrl = (url, time) => `${url}${url.includes('&') ? '?' : '&'}cacheRefresh=${time}`;
+
+
 export const requestWithRetry = async (url, params, inputTime) => {
   const time = inputTime ? inputTime + 1 : 1;
   const [request] = await esriLoader.loadModules(['esri/request']);
 
   try {
-    return await request(url, {
+    const requestUrl = time > 1 ? addCacheRefreshParamToUrl(url, time) : url;
+    const response = await request(requestUrl, {
       ...params,
       f: 'json',
       responseType: 'json',
     });
+
+    if (response.error && REQUEST_RETRY_CODES.includes(response.error.code)) {
+      throw new Error({
+        ...response.error,
+        details: {
+          ...response.error.details,
+          httpStatus: response.error.code,
+        },
+      });
+    }
+
+    return response;
   } catch (err) {
+    // eslint-disable-next-line
     console.log(err);
 
     if (time > REQUEST_MAX_RETRIES) throw (err);
 
     if (err.message === 'Timeout exceeded' || REQUEST_RETRY_CODES.includes(err.details.httpStatus)) {
+      // eslint-disable-next-line
       console.log(`ArcGoose: waiting ${2 ** time} ms before retrying query...`);
       await wait(2 ** time);
       return requestWithRetry(url, params, time);
