@@ -261,7 +261,7 @@ interface Dog {
 }
 
 // optional step: Setup a schema. This allows use of different types and Alias
-const catSchema = {
+const catSchema: arcgoose.Schema = {
     'Cat_Name': {
         type: String, // Must be a Type!
         alias: 'Name' // Must match with Cat Interface
