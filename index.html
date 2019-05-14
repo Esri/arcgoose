@@ -1,0 +1,26 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>ArcGIS REST JS</title>
+</head>
+<body>
+  Open your console to see the demo.
+</body>
+  <script src="dist/arcgoose.js"></script>
+  <script>
+    async function go() {
+    const url = `http://sampleserver6.arcgisonline.com/arcgis/rest/services/Census/MapServer`;
+    const connection = await arcgoose.default.connect({ url });
+    const States = await arcgoose.default.model(connection.layers.states, { STATE_NAME: String });
+    const state = await States.findOne({ STATE_NAME: 'Alaska' }).exec();
+    
+    console.log(state); // >> {attributes: { STATE_NAME: 'Alaska' }, geometry: null, centroid: null}
+    }
+
+    go();
+  </script>
+</html>

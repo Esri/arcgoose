@@ -28,13 +28,11 @@ import {
 
 export class ApplyEdits {
   static async deleteWhere(featureLayer, where) {
-    const editsResult = await requestWithRetry(`${featureLayer.url}/deleteFeatures`, {
-      query: { where }
-    });
+    const editsResult = await requestWithRetry(`${featureLayer.url}/deleteFeatures`, where);
 
     return {
       layerId: featureLayer.id,
-      deletedFeatures: processResults(editsResult.data.deleteResults),
+      deletedFeatures: processResults(editsResult.deleteResults),
     };
   }
 
@@ -103,9 +101,7 @@ export class ApplyEdits {
       deletes: deleteIds,
     };
 
-    const editsResult = await requestWithRetry(`${this.featureLayer.url}/applyEdits`, {
-      query
-    });
+    const editsResult = await requestWithRetry(`${this.featureLayer.url}/applyEdits`, query);
 
     /* TODO: handle missing data field */
 

@@ -100,9 +100,7 @@ export default async (handleArray, progressCallback) => {
       edits: JSON.stringify(edits),
     };
 
-    const result = await requestWithRetry(`${serviceUrl}/applyEdits`, { // eslint-disable-line
-      query
-    });
+    const result = await requestWithRetry(`${serviceUrl}/applyEdits`, query);
 
     editsResultsArray.push(result);
 

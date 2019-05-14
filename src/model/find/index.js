@@ -163,7 +163,7 @@ export class Find {
     const queryUrl = `${this.featureLayer.url}/query`;
 
     if (this.query.returnCountOnly) {
-      const count = await requestWithRetry(queryUrl, { query });
+      const count = await requestWithRetry(queryUrl, query);
       return count;
     }
 

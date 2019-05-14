@@ -80,9 +80,7 @@ export class ApplyMultiLayerEdits {
       edits: JSON.stringify(this.edits),
     };
 
-    const editsResult = await requestWithRetry(`${this.url}/applyEdits`, {
-      query
-    });
+    const editsResult = await requestWithRetry(`${this.url}/applyEdits`, query);
 
     /* TODO: handle missing data field */
 

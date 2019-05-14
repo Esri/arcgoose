@@ -26,7 +26,6 @@ const wait = timeout => new Promise((resolve) => {
   }, timeout);
 });
 
-
 export const requestWithRetry = async (url, params, inputTime) => {
   const time = inputTime ? inputTime + 1 : 1;
   try {
