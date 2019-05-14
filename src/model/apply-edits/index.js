@@ -29,12 +29,7 @@ import {
 export class ApplyEdits {
   static async deleteWhere(featureLayer, where) {
     const editsResult = await requestWithRetry(`${featureLayer.url}/deleteFeatures`, {
-      query: {
-        f: 'json',
-        where,
-      },
-      method: 'post',
-      responseType: 'json',
+      query: { where }
     });
 
     return {
@@ -49,7 +44,7 @@ export class ApplyEdits {
     this.adds = [];
     this.deletes = [];
     this.updates = [];
-    this.useGlobalIds = true;
+    this.shouldUseGlobalIds = true;
   }
 
   add(features) {
@@ -68,12 +63,12 @@ export class ApplyEdits {
   }
 
   useGlobalIds() {
-    this.useGlobalIds = true;
+    this.shouldUseGlobalIds = true;
     return this;
   }
 
   useObjectIds() {
-    this.useGlobalIds = false;
+    this.shouldUseGlobalIds = false;
     return this;
   }
 
@@ -91,12 +86,21 @@ export class ApplyEdits {
   }
 
   async exec() {
+    let deleteIds = null;
+    if (this.deletes.length) {
+      if (this.shouldUseGlobalIds) {
+        deleteIds = this.deletes.map(id => `"${id}"`).join(',');
+      } else {
+        deleteIds = this.deletes.map(id => `${id}`).join(',');
+      }
+    }
+
     const query = {
-      useGlobalIds: this.useGlobalIds,
+      useGlobalIds: this.shouldUseGlobalIds,
       rollbackOnFailure: false,
       adds: this.adds.length ? JSON.stringify(this.adds) : null,
       updates: this.updates.length ? JSON.stringify(this.updates) : null,
-      deletes: this.deletes.length ? this.deletes.map(id => `"${id}"`).join(',') : null,
+      deletes: deleteIds,
     };
 
     const editsResult = await requestWithRetry(`${this.featureLayer.url}/applyEdits`, {

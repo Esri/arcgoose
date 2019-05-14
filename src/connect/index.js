@@ -24,7 +24,7 @@ const fetchFeatureServiceInfo = featureServiceUrl => request(`${featureServiceUr
 
 
 const fetchLayers = (url, layers) => {
-  if (!Array.isArray(layers)) return [];
+  if (!Array.isArray(layers)) return Promise.resolve([]);
 
   const results = [];
   layers.forEach(({ id }) => results.push(request(`${url}/${id}`)));
@@ -42,6 +42,8 @@ export default async ({ url, portalUrl, portalItemId }) => {
   }
 
   const result = await fetchFeatureServiceInfo(featureServiceUrl);
+  if (result.error) throw new Error(result.error);
+
   const featureServiceInfo = {
     ...result,
     type: 'Feature Service',

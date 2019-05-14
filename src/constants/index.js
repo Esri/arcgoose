@@ -13,5 +13,5 @@
  * limitations under the License.
  */
 
-export const REQUEST_MAX_RETRIES = 10;
-export const REQUEST_RETRY_CODES = [408, 503, 504];
+export const REQUEST_MAX_RETRIES = 15;
+export const REQUEST_RETRY_CODES = [408, 502, 503, 504];

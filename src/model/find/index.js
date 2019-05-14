@@ -19,6 +19,10 @@ import {
 } from './filter-attributes';
 
 import {
+  fetchPagedFeatures,
+} from './fetch-paged-features';
+
+import {
   requestWithRetry,
 } from '../../helpers/request-with-retry';
 
@@ -109,6 +113,13 @@ export class Find {
     return this;
   }
 
+  offset(amount) {
+    if (amount && amount > 0) {
+      this.query.resultOffset = amount;
+    }
+    return this;
+  }
+
   limit(amount) {
     if (amount && amount > 0) {
       this.query.resultRecordCount = amount;
@@ -119,6 +130,11 @@ export class Find {
   outStatistics(outStatistics, groupByFieldsForStatistics) {
     this.query.outStatistics = outStatistics;
     this.query.groupByFieldsForStatistics = groupByFieldsForStatistics;
+    return this;
+  }
+
+  returnCountOnly() {
+    this.query.returnCountOnly = true;
     return this;
   }
 
@@ -137,24 +153,41 @@ export class Find {
       inSR: this.query.inSR,
       spatialRel: this.query.spatialRel,
       orderByFields: this.query.orderByFields,
+      resultOffset: this.query.resultOffset,
       resultRecordCount: this.query.resultRecordCount,
       outStatistics: JSON.stringify(this.query.outStatistics),
+      returnCountOnly: this.query.returnCountOnly,
       groupByFieldsForStatistics: this.query.groupByFieldsForStatistics,
     };
 
-    const findResult = await requestWithRetry(`${this.featureLayer.url}/query`, query);
+    const queryUrl = `${this.featureLayer.url}/query`;
 
-    const features = findResult.features.map(({ attributes, geometry, centroid }) => ({
-      attributes: this.query.outStatistics ? attributes : filterAttributes(attributes, this.schema),
+    if (this.query.returnCountOnly) {
+      const count = await requestWithRetry(queryUrl, { query });
+      return count;
+    }
+
+    const featureData = await fetchPagedFeatures(queryUrl, query);
+
+    const features = featureData.features.map(({ attributes, geometry, centroid }) => ({
+      attributes: this.query.outStatistics ?
+        attributes :
+        filterAttributes(attributes, {
+          [this.featureLayer.objectIdField]: {
+            type: Number,
+            alias: 'esriObjectId',
+          },
+          ...this.schema,
+        }),
       geometry: this.query.returnGeometry ? {
         ...geometry,
         spatialReference: {
-          ...findResult.spatialReference,
+          ...featureData.spatialReference,
         },
       } : null,
       centroid: this.query.returnCentroid ? {
         ...centroid,
-        spatialReference: findResult.spatialReference,
+        spatialReference: featureData.spatialReference,
       } : null,
     }));
 
