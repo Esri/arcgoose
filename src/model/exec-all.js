@@ -86,7 +86,7 @@ export default async (handleArray, progressCallback) => {
   if (handleArray.length < 1) return null;
 
   const serviceUrl = handleArray[0].serviceUrl;
-  const authentication = handleArray[0].serviceUrl;
+  const authentication = handleArray[0].authentication;
 
   const editsArray = flattenEditHandles(handleArray);
   const editChunks = getChunks(editsArray);
