@@ -75,21 +75,16 @@ export class ApplyMultiLayerEdits {
 
   async exec() {
     const query = {
-      f: 'json',
       useGlobalIds: true,
       rollbackOnFailure: false,
       edits: JSON.stringify(this.edits),
     };
 
-    const editsResult = await requestWithRetry(`${this.url}/applyEdits`, {
-      query,
-      method: 'post',
-      responseType: 'json',
-    });
+    const editsResult = await requestWithRetry(`${this.url}/applyEdits`, query);
 
     /* TODO: handle missing data field */
 
-    return editsResult.data.map(layer => ({
+    return editsResult.map(layer => ({
       layerId: this.layers.find(l => l.index === layer.id) &&
         this.layers.find(l => l.index === layer.id).id,
       addedFeatures: processResults(layer.addResults),

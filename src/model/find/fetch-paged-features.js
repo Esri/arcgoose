@@ -29,13 +29,7 @@ export const fetchPagedFeatures = async (url, query, inputTime) => {
 
   while (exceededTransferLimit) {
     // eslint-disable-next-line no-await-in-loop
-    const requestResult = await requestWithRetry(url, {
-      query,
-      method: 'get',
-      responseType: 'json',
-    }, inputTime);
-
-    const findResult = requestResult.data;
+    const findResult = await requestWithRetry(url, query, inputTime);
 
     features.push(...findResult.features);
     spatialReference = findResult.spatialReference;

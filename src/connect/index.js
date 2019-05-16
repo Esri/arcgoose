@@ -17,17 +17,17 @@ import request from '../helpers/request-with-retry';
 
 
 const fetchPortalItem = (portalUrl, portalItemId) =>
-  request(`https://${portalUrl}/sharing/rest/content/items/${portalItemId}?f=json`);
+  request(`https://${portalUrl}/sharing/rest/content/items/${portalItemId}`);
 
 
-const fetchFeatureServiceInfo = featureServiceUrl => request(`${featureServiceUrl}?f=json`);
+const fetchFeatureServiceInfo = featureServiceUrl => request(`${featureServiceUrl}`);
 
 
 const fetchLayers = (url, layers) => {
   if (!Array.isArray(layers)) return Promise.resolve([]);
 
   const results = [];
-  layers.forEach(({ id }) => results.push(request(`${url}/${id}?f=json`)));
+  layers.forEach(({ id }) => results.push(request(`${url}/${id}`)));
 
   return Promise.all(results);
 };
@@ -38,38 +38,38 @@ export default async ({ url, portalUrl, portalItemId }) => {
 
   if (!featureServiceUrl) {
     const result = await fetchPortalItem(portalUrl, portalItemId);
-    featureServiceUrl = result.data.url;
+    featureServiceUrl = result.url;
   }
 
   const result = await fetchFeatureServiceInfo(featureServiceUrl);
   if (result.error) throw new Error(result.error);
 
   const featureServiceInfo = {
-    ...result.data,
+    ...result,
     type: 'Feature Service',
     url: featureServiceUrl,
     capabilities: {
-      create: result.data.capabilities.includes('Create'),
-      query: result.data.capabilities.includes('Query'),
-      update: result.data.capabilities.includes('Update'),
-      delete: result.data.capabilities.includes('Delete'),
-      editing: result.data.capabilities.includes('Editing'),
+      create: result.capabilities.includes('Create'),
+      query: result.capabilities.includes('Query'),
+      update: result.capabilities.includes('Update'),
+      delete: result.capabilities.includes('Delete'),
+      editing: result.capabilities.includes('Editing'),
     },
     layers: {},
     tables: {},
   };
 
-  const layers = await fetchLayers(featureServiceUrl, result.data.layers);
-  const tables = await fetchLayers(featureServiceUrl, result.data.tables);
+  const layers = await fetchLayers(featureServiceUrl, result.layers);
+  const tables = await fetchLayers(featureServiceUrl, result.tables);
 
-  layers.forEach(layer => featureServiceInfo.layers[layer.data.name] = {
-    ...layer.data,
-    url: `${featureServiceUrl}/${layer.data.id}`,
+  layers.forEach(layer => featureServiceInfo.layers[layer.name] = {
+    ...layer,
+    url: `${featureServiceUrl}/${layer.id}`,
     serviceUrl: featureServiceUrl,
   });
-  tables.forEach(table => featureServiceInfo.tables[table.data.name] = {
-    ...table.data,
-    url: `${featureServiceUrl}/${table.data.id}`,
+  tables.forEach(table => featureServiceInfo.tables[table.name] = {
+    ...table,
+    url: `${featureServiceUrl}/${table.id}`,
     serviceUrl: featureServiceUrl,
   });
 

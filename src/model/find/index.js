@@ -140,7 +140,6 @@ export class Find {
 
   async exec() {
     const query = {
-      f: 'json',
       where: this.query.filters
         .map(filter => `(${filter})`)
         .join(' AND ') || '1=1',
@@ -164,12 +163,8 @@ export class Find {
     const queryUrl = `${this.featureLayer.url}/query`;
 
     if (this.query.returnCountOnly) {
-      const count = await requestWithRetry(queryUrl, {
-        query,
-        method: 'get',
-        responseType: 'json',
-      });
-      return count.data;
+      const count = await requestWithRetry(queryUrl, query);
+      return count;
     }
 
     const featureData = await fetchPagedFeatures(queryUrl, query);

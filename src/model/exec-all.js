@@ -95,17 +95,12 @@ export default async (handleArray, progressCallback) => {
   for (let i = 0; i < editChunks.length; i += 1) {
     const edits = expandEdits(editChunks[i]);
     const query = {
-      f: 'json',
       useGlobalIds: true,
       rollbackOnFailure: false,
       edits: JSON.stringify(edits),
     };
 
-    const result = await requestWithRetry(`${serviceUrl}/applyEdits`, { // eslint-disable-line
-      query,
-      method: 'post',
-      responseType: 'json',
-    });
+    const result = await requestWithRetry(`${serviceUrl}/applyEdits`, query);
 
     editsResultsArray.push(result);
 
@@ -116,7 +111,7 @@ export default async (handleArray, progressCallback) => {
 
   // TODO: this should handle if layer.id already exists in editsResult
   const editsResults = [];
-  editsResultsArray.forEach(result => editsResults.push(...result.data.map(layer => ({
+  editsResultsArray.forEach(result => editsResults.push(...result.map(layer => ({
     layerId: layer.id,
     layerName: (handleArray.find(handle => handle.payload.id === layer.id) || {}).name,
     addedFeatures: processResults(layer.addResults),

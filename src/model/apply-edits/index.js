@@ -28,18 +28,11 @@ import {
 
 export class ApplyEdits {
   static async deleteWhere(featureLayer, where) {
-    const editsResult = await requestWithRetry(`${featureLayer.url}/deleteFeatures`, {
-      query: {
-        f: 'json',
-        where,
-      },
-      method: 'post',
-      responseType: 'json',
-    });
+    const editsResult = await requestWithRetry(`${featureLayer.url}/deleteFeatures`, where);
 
     return {
       layerId: featureLayer.id,
-      deletedFeatures: processResults(editsResult.data.deleteResults),
+      deletedFeatures: processResults(editsResult.deleteResults),
     };
   }
 
@@ -101,7 +94,6 @@ export class ApplyEdits {
     }
 
     const query = {
-      f: 'json',
       useGlobalIds: this.shouldUseGlobalIds,
       rollbackOnFailure: false,
       adds: this.adds.length ? JSON.stringify(this.adds) : null,
@@ -109,20 +101,16 @@ export class ApplyEdits {
       deletes: deleteIds,
     };
 
-    const editsResult = await requestWithRetry(`${this.featureLayer.url}/applyEdits`, {
-      query,
-      method: 'post',
-      responseType: 'json',
-    });
+    const editsResult = await requestWithRetry(`${this.featureLayer.url}/applyEdits`, query);
 
     /* TODO: handle missing data field */
 
     return {
       layerId: this.featureLayer.id,
-      addedFeatures: processResults(editsResult.data.addResults),
-      updatedFeatures: processResults(editsResult.data.updateResults),
-      deletedFeatures: processResults(editsResult.data.deleteResults),
-      addedOIDs: processResultsOIDs(editsResult.data.addResults),
+      addedFeatures: processResults(editsResult.addResults),
+      updatedFeatures: processResults(editsResult.updateResults),
+      deletedFeatures: processResults(editsResult.deleteResults),
+      addedOIDs: processResultsOIDs(editsResult.addResults),
     };
   }
 }
