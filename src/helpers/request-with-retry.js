@@ -12,13 +12,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { request } from '@esri/arcgis-rest-request';
 
 import {
   REQUEST_MAX_RETRIES,
   REQUEST_RETRY_CODES,
 } from '../constants';
-
-import { request } from "@esri/arcgis-rest-request";
 
 const wait = timeout => new Promise((resolve) => {
   setTimeout(() => {

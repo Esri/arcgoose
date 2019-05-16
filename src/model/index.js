@@ -16,14 +16,14 @@
 import FeatureLayer from './feature-layer';
 import FeatureTable from './feature-table';
 
-
-export default ({ type, url, serviceUrl, id, name, objectIdField }, schema) => {
+// url, serviceUrl, id, name, objectIdField
+export default ({ type, ...otherParams }, schema) => {
   if (type === 'Feature Layer') {
-    return new FeatureLayer({ url, serviceUrl, id, name, schema, objectIdField });
+    return new FeatureLayer({ ...otherParams, schema });
   }
 
   if (type === 'Table') {
-    return new FeatureTable({ url, serviceUrl, id, name, schema, objectIdField });
+    return new FeatureTable({ ...otherParams, schema });
   }
 
   return null;

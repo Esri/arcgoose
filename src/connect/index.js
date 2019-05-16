@@ -16,36 +16,38 @@
 import request from '../helpers/request-with-retry';
 
 
-const fetchPortalItem = (portalUrl, portalItemId) =>
-  request(`https://${portalUrl}/sharing/rest/content/items/${portalItemId}`);
+const fetchPortalItem = ({ portalUrl, portalItemId, ...otherParams }) =>
+  request(`https://${portalUrl}/sharing/rest/content/items/${portalItemId}`, otherParams);
 
 
-const fetchFeatureServiceInfo = featureServiceUrl => request(`${featureServiceUrl}`);
+const fetchFeatureServiceInfo = ({ featureServiceUrl, ...otherParams }) =>
+  request(`${featureServiceUrl}`, otherParams);
 
 
-const fetchLayers = (url, layers) => {
+const fetchLayers = ({ url, layers, ...otherParams }) => {
   if (!Array.isArray(layers)) return Promise.resolve([]);
 
   const results = [];
-  layers.forEach(({ id }) => results.push(request(`${url}/${id}`)));
+  layers.forEach(({ id }) => results.push(request(`${url}/${id}`), otherParams));
 
   return Promise.all(results);
 };
 
 
-export default async ({ url, portalUrl, portalItemId }) => {
+export default async ({ url, portalUrl, portalItemId, authentication }) => {
   let featureServiceUrl = url;
 
   if (!featureServiceUrl) {
-    const result = await fetchPortalItem(portalUrl, portalItemId);
+    const result = await fetchPortalItem({ portalUrl, portalItemId, authentication });
     featureServiceUrl = result.url;
   }
 
-  const result = await fetchFeatureServiceInfo(featureServiceUrl);
+  const result = await fetchFeatureServiceInfo({ featureServiceUrl, authentication });
   if (result.error) throw new Error(result.error);
 
   const featureServiceInfo = {
     ...result,
+    authentication,
     type: 'Feature Service',
     url: featureServiceUrl,
     capabilities: {
@@ -59,8 +61,8 @@ export default async ({ url, portalUrl, portalItemId }) => {
     tables: {},
   };
 
-  const layers = await fetchLayers(featureServiceUrl, result.layers);
-  const tables = await fetchLayers(featureServiceUrl, result.tables);
+  const layers = await fetchLayers({ featureServiceUrl, layers: result.layers, authentication });
+  const tables = await fetchLayers({ featureServiceUrl, layers: result.tables, authentication });
 
   layers.forEach(layer => featureServiceInfo.layers[layer.name] = {
     ...layer,
