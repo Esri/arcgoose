@@ -38,11 +38,10 @@ const fromAlias = (fieldName, schema) => {
 
 
 export class Find {
-  constructor(featureLayer, { filters, outFields, findOne }, schema) {
+  constructor(featureLayer, { findOne, ...query }, schema) {
     this.featureLayer = featureLayer;
     this.query = {
-      filters,
-      outFields,
+      ...query,
       returnGeometry: false,
       returnCentroid: false,
       inSR: 4326,
@@ -163,11 +162,11 @@ export class Find {
     const queryUrl = `${this.featureLayer.url}/query`;
 
     if (this.query.returnCountOnly) {
-      const count = await requestWithRetry(queryUrl, query);
+      const count = await requestWithRetry(queryUrl, this.query.authentication, query);
       return count;
     }
 
-    const featureData = await fetchPagedFeatures(queryUrl, query);
+    const featureData = await fetchPagedFeatures(queryUrl, this.query.authentication, query);
 
     const features = featureData.features.map(({ attributes, geometry, centroid }) => ({
       attributes: this.query.outStatistics ?

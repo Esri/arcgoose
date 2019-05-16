@@ -16,21 +16,18 @@
 import request from '../helpers/request-with-retry';
 
 
-const fetchPortalItem = ({ portalUrl, portalItemId, ...otherParams }) =>
-  request(`https://${portalUrl}/sharing/rest/content/items/${portalItemId}`, otherParams);
+const fetchPortalItem = ({ portalUrl, portalItemId, authentication }) =>
+  request(`https://${portalUrl}/sharing/rest/content/items/${portalItemId}`, authentication);
 
 
-const fetchFeatureServiceInfo = ({ featureServiceUrl, ...otherParams }) =>
-  request(`${featureServiceUrl}`, otherParams);
+const fetchFeatureServiceInfo = ({ featureServiceUrl, authentication }) =>
+  request(`${featureServiceUrl}`, authentication);
 
 
-const fetchLayers = ({ url, layers, ...otherParams }) => {
+const fetchLayers = ({ featureServiceUrl, layers, authentication }) => {
   if (!Array.isArray(layers)) return Promise.resolve([]);
 
-  const results = [];
-  layers.forEach(({ id }) => results.push(request(`${url}/${id}`), otherParams));
-
-  return Promise.all(results);
+  return Promise.all(layers.map(({ id }) => request(`${featureServiceUrl}/${id}`, authentication)));
 };
 
 
@@ -66,11 +63,13 @@ export default async ({ url, portalUrl, portalItemId, authentication }) => {
 
   layers.forEach(layer => featureServiceInfo.layers[layer.name] = {
     ...layer,
+    authentication,
     url: `${featureServiceUrl}/${layer.id}`,
     serviceUrl: featureServiceUrl,
   });
   tables.forEach(table => featureServiceInfo.tables[table.name] = {
     ...table,
+    authentication,
     url: `${featureServiceUrl}/${table.id}`,
     serviceUrl: featureServiceUrl,
   });

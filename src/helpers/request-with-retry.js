@@ -25,10 +25,10 @@ const wait = timeout => new Promise((resolve) => {
   }, timeout);
 });
 
-export const requestWithRetry = async (url, params, inputTime) => {
+export const requestWithRetry = async (url, authentication, params, inputTime) => {
   const time = inputTime ? inputTime + 1 : 1;
   try {
-    return await request(url, { params });
+    return await request(url, { params, authentication });
   } catch (err) {
     // eslint-disable-next-line
     console.log(err);
@@ -39,7 +39,7 @@ export const requestWithRetry = async (url, params, inputTime) => {
       // eslint-disable-next-line
       console.log(`ArcGoose: waiting ${2 ** time} ms before retrying query...`);
       await wait(2 ** time);
-      return requestWithRetry(url, params, time);
+      return requestWithRetry(url, authentication, params, time);
     }
 
     throw (err);

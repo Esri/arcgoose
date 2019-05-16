@@ -86,6 +86,7 @@ export default async (handleArray, progressCallback) => {
   if (handleArray.length < 1) return null;
 
   const serviceUrl = handleArray[0].serviceUrl;
+  const authentication = handleArray[0].serviceUrl;
 
   const editsArray = flattenEditHandles(handleArray);
   const editChunks = getChunks(editsArray);
@@ -100,7 +101,8 @@ export default async (handleArray, progressCallback) => {
       edits: JSON.stringify(edits),
     };
 
-    const result = await requestWithRetry(`${serviceUrl}/applyEdits`, query);
+    // eslint-disable-next-line
+    const result = await requestWithRetry(`${serviceUrl}/applyEdits`, authentication, query);
 
     editsResultsArray.push(result);
 
