@@ -35,7 +35,6 @@ export class FeatureLayer {
     id,
     name,
     schema,
-    objectIdField,
     authentication,
   }) {
     this.type = 'table';
@@ -44,7 +43,6 @@ export class FeatureLayer {
     this.id = id;
     this.name = name;
     this.schema = schema;
-    this.objectIdField = objectIdField;
     this.authentication = authentication;
   }
 

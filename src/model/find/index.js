@@ -168,11 +168,12 @@ export class Find {
 
     const featureData = await fetchPagedFeatures(queryUrl, this.query.authentication, query);
 
+    const objectIdField = featureData.objectIdField;
     const features = featureData.features.map(({ attributes, geometry, centroid }) => ({
       attributes: this.query.outStatistics ?
         attributes :
         filterAttributes(attributes, {
-          [this.featureLayer.objectIdField]: {
+          [objectIdField]: {
             type: Number,
             alias: 'esriObjectId',
           },
