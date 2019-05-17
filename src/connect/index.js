@@ -46,12 +46,14 @@ export default async ({ url, portal, portalItemId, authentication }) => {
     authentication,
     url: `${featureService.url}/${layer.id}`,
     serviceUrl: featureService.url,
+    type: 'Feature Layer',
   });
   service.tables.forEach(table => featureServiceInfo.tables[table.name] = {
     ...table,
     authentication,
     url: `${featureService.url}/${table.id}`,
     serviceUrl: featureService.url,
+    type: 'Table',
   });
 
 
