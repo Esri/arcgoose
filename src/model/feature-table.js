@@ -35,7 +35,7 @@ export class FeatureLayer {
     id,
     name,
     schema,
-    objectIdField,
+    authentication,
   }) {
     this.type = 'table';
     this.url = url;
@@ -43,13 +43,14 @@ export class FeatureLayer {
     this.id = id;
     this.name = name;
     this.schema = schema;
-    this.objectIdField = objectIdField;
+    this.authentication = authentication;
   }
 
   find(queryObject) {
     const query = {
       filters: queryObject ? [getQueryFromQueryObject(queryObject)] : [],
       outFields: getFieldsFromSchema(this.schema),
+      authentication: this.authentication,
     };
 
     return new Find(this, query, this.schema);
@@ -60,17 +61,18 @@ export class FeatureLayer {
       filters: queryObject ? [getQueryFromQueryObject(queryObject)] : [],
       outFields: getFieldsFromSchema(this.schema),
       findOne: true,
+      authentication: this.authentication,
     };
 
     return new Find(this, query, this.schema);
   }
 
   applyEdits() {
-    return new ApplyEdits(this, this.schema);
+    return new ApplyEdits(this, this.schema, this.authentication);
   }
 
   deleteWhere(where) {
-    return ApplyEdits.deleteWhere(this, where);
+    return ApplyEdits.deleteWhere(this, where, this.authentication);
   }
 }
 

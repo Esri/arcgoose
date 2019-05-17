@@ -1,4 +1,4 @@
-/* Copyright 2018 Esri
+/* Copyright 2019 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,65 +13,49 @@
  * limitations under the License.
  */
 
+import { getItem } from '@esri/arcgis-rest-portal';
 import request from '../helpers/request-with-retry';
 
+export default async ({ url, portal, portalItemId, authentication }) => {
+  const featureService = url ? { url } : await getItem(portalItemId, {
+    portal,
+    authentication,
+  });
 
-const fetchPortalItem = (portalUrl, portalItemId) =>
-  request(`https://${portalUrl}/sharing/rest/content/items/${portalItemId}?f=json`);
-
-
-const fetchFeatureServiceInfo = featureServiceUrl => request(`${featureServiceUrl}?f=json`);
-
-
-const fetchLayers = (url, layers) => {
-  if (!Array.isArray(layers)) return Promise.resolve([]);
-
-  const results = [];
-  layers.forEach(({ id }) => results.push(request(`${url}/${id}?f=json`)));
-
-  return Promise.all(results);
-};
-
-
-export default async ({ url, portalUrl, portalItemId }) => {
-  let featureServiceUrl = url;
-
-  if (!featureServiceUrl) {
-    const result = await fetchPortalItem(portalUrl, portalItemId);
-    featureServiceUrl = result.data.url;
-  }
-
-  const result = await fetchFeatureServiceInfo(featureServiceUrl);
-  if (result.error) throw new Error(result.error);
+  const service = await request(featureService.url, authentication);
+  if (service.error) throw new Error(service.error);
 
   const featureServiceInfo = {
-    ...result.data,
+    ...service,
+    authentication,
     type: 'Feature Service',
-    url: featureServiceUrl,
+    url: featureService.url,
     capabilities: {
-      create: result.data.capabilities.includes('Create'),
-      query: result.data.capabilities.includes('Query'),
-      update: result.data.capabilities.includes('Update'),
-      delete: result.data.capabilities.includes('Delete'),
-      editing: result.data.capabilities.includes('Editing'),
+      create: service.capabilities.includes('Create'),
+      query: service.capabilities.includes('Query'),
+      update: service.capabilities.includes('Update'),
+      delete: service.capabilities.includes('Delete'),
+      editing: service.capabilities.includes('Editing'),
     },
     layers: {},
     tables: {},
   };
 
-  const layers = await fetchLayers(featureServiceUrl, result.data.layers);
-  const tables = await fetchLayers(featureServiceUrl, result.data.tables);
+  service.layers.forEach(layer => featureServiceInfo.layers[layer.name] = {
+    ...layer,
+    authentication,
+    url: `${featureService.url}/${layer.id}`,
+    serviceUrl: featureService.url,
+    type: 'Feature Layer',
+  });
+  service.tables.forEach(table => featureServiceInfo.tables[table.name] = {
+    ...table,
+    authentication,
+    url: `${featureService.url}/${table.id}`,
+    serviceUrl: featureService.url,
+    type: 'Table',
+  });
 
-  layers.forEach(layer => featureServiceInfo.layers[layer.data.name] = {
-    ...layer.data,
-    url: `${featureServiceUrl}/${layer.data.id}`,
-    serviceUrl: featureServiceUrl,
-  });
-  tables.forEach(table => featureServiceInfo.tables[table.data.name] = {
-    ...table.data,
-    url: `${featureServiceUrl}/${table.data.id}`,
-    serviceUrl: featureServiceUrl,
-  });
 
   return featureServiceInfo;
 };
