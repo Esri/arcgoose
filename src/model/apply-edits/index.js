@@ -28,7 +28,7 @@ import {
 
 export class ApplyEdits {
   static async deleteWhere(featureLayer, where, authentication) {
-    const editsResult = await requestWithRetry(`${featureLayer.url}/deleteFeatures`, authentication, where);
+    const editsResult = await requestWithRetry(`${featureLayer.url}/deleteFeatures`, authentication, { where });
 
     return {
       layerId: featureLayer.id,
