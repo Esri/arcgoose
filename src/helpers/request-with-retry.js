@@ -35,7 +35,7 @@ export const requestWithRetry = async (url, authentication, params, inputTime) =
 
     if (time > REQUEST_MAX_RETRIES) throw (err);
 
-    if (err.message === 'Timeout exceeded' || REQUEST_RETRY_CODES.includes(err.details.httpStatus)) {
+    if (err.message === 'Timeout exceeded' || REQUEST_RETRY_CODES.includes(err.code)) {
       // eslint-disable-next-line
       console.log(`ArcGoose: waiting ${2 ** time} ms before retrying query...`);
       await wait(2 ** time);
