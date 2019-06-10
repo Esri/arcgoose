@@ -17,6 +17,7 @@ import { request } from '@esri/arcgis-rest-request';
 import {
   REQUEST_MAX_RETRIES,
   REQUEST_RETRY_CODES,
+  REQUEST_RETRY_MESSAGES,
 } from '../constants';
 
 const wait = timeout => new Promise((resolve) => {
@@ -35,7 +36,8 @@ export const requestWithRetry = async (url, authentication, params, inputTime) =
 
     if (time > REQUEST_MAX_RETRIES) throw (err);
 
-    if (err.message === 'Timeout exceeded' || REQUEST_RETRY_CODES.includes(err.code)) {
+    if (REQUEST_RETRY_MESSAGES.includes(err.message) ||
+      REQUEST_RETRY_CODES.includes(err.code)) {
       // eslint-disable-next-line
       console.log(`ArcGoose: waiting ${2 ** time} ms before retrying query...`);
       await wait(2 ** time);
