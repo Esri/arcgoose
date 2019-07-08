@@ -13,72 +13,34 @@
  * limitations under the License.
  */
 
-// takes array of features
-export const castAttributes = (attributes, schema) => {
-  const castedAttributes = {};
-
-  Object.keys(schema)
-    // .filter(key => schema[key].type === Object || schema[key].type === 'object')
-    .filter(key => attributes[key] !== undefined)
-    .forEach((key) => {
-      // some special types need casting
-      try {
-        switch (schema[key].type) {
-          case Object:
-          case 'object': {
-            castedAttributes[key] =
-              attributes[key] !== null ? JSON.stringify(attributes[key]) : null;
-            break;
-          }
-
-          case Date:
-          case 'date': {
-            castedAttributes[key] = attributes[key].getTime();
-            break;
-          }
-
-          case Boolean:
-          case 'boolean': {
-            castedAttributes[key] = attributes[key] ? 1 : 0;
-            break;
-          }
-
-          default: {
-            break;
-          }
-        }
-      } catch (e) {
-        castedAttributes[key] = null;
-      }
-    });
-
-  return {
-    ...attributes,
-    ...castedAttributes,
-  };
-};
-
-
-export const dealiasAttributes = (attributes, schema) => {
-  if (!schema) return attributes;
-
-  const mapping = {};
-  Object.keys(schema)
-    .forEach(key => mapping[schema[key].alias || key] = key);
-
-  const newAttributes = {};
-  Object.keys(attributes)
-    .forEach(key => newAttributes[mapping[key]] = attributes[key]);
-
-  return newAttributes;
-};
+import { parseNonEsriTypesWrite } from '../../helpers/parse-non-esri-types';
+import { parseAliasesWrite } from '../../helpers/parse-aliases';
+import { parseDefaultValuesWrite } from '../../helpers/parse-default-values';
+import { parseDatesWrite } from '../../helpers/parse-dates';
+import { validate } from '../../helpers/validate';
 
 
 export const filterAttributes = (attributes, schema) => {
-  const dealiasedAttributes = dealiasAttributes(attributes, schema);
-  const castedAttributes = castAttributes(dealiasedAttributes, schema);
+  if (!schema) return attributes;
 
-  return castedAttributes;
+  const cleanAttributes = parseAliasesWrite(
+     parseDefaultValuesWrite(
+       parseDatesWrite(attributes, schema),
+       schema,
+     ),
+     schema,
+   );
+
+  const {
+     valid,
+     errors,
+   } = validate(cleanAttributes, schema);
+
+  if (!valid) {
+    throw new Error({ errors });
+  }
+
+  return parseNonEsriTypesWrite(cleanAttributes, schema);
 };
 
 export default filterAttributes;
