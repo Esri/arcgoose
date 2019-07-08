@@ -25,7 +25,7 @@ const getQueryFromQueryObject = queryObject => Object.keys(queryObject)
   .join(' AND ');
 
 
-const getFieldsFromSchema = schema => Object.keys(schema);
+const getFieldsFromSchema = schema => Object.keys(schema.properties);
 
 
 export class FeatureLayer {

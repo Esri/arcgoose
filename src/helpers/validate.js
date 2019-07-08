@@ -15,11 +15,6 @@
 
 import * as Ajv from 'ajv';
 
-const ajv = new Ajv({
-  $data: true,
-});
-
-
 // parse JSON objects and booleans
 export const validate = (attributes, schema) => {
   if (!schema) {
@@ -28,6 +23,10 @@ export const validate = (attributes, schema) => {
       errors: null,
     };
   }
+
+  const ajv = new Ajv({
+    $data: true,
+  });
 
   const validator = ajv.compile(schema);
 

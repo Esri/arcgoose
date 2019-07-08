@@ -31,6 +31,7 @@ export const filterAttributes = (attributes, schema) => {
   } = validate(cleanAttributes, schema);
 
   if (!valid) {
+    console.log(errors);
     throw new Error({ errors });
   }
 
