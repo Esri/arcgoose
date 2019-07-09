@@ -20,19 +20,20 @@ import { parseDatesRead } from '../../helpers/parse-dates';
 import { validate } from '../../helpers/validate';
 
 
-export const filterAttributes = (attributes, schema) => {
+export const filterAttributes = (attributes, schema, doValidation) => {
   if (!schema) return attributes;
 
   const cleanAttributes = parseNonEsriTypesRead(attributes, schema);
 
-  const {
-    valid,
-    errors,
-  } = validate(cleanAttributes, schema);
+  if (doValidation) {
+    const {
+      valid,
+      errors,
+    } = validate(cleanAttributes, schema);
 
-  if (!valid) {
-    console.log(errors);
-    throw new Error({ errors });
+    if (!valid) {
+      throw new Error({ errors });
+    }
   }
 
   return parseAliasesRead(

@@ -30,8 +30,8 @@ import {
 const fromAlias = (fieldName, schema) => {
   if (!schema) return fieldName;
 
-  const originalKey = Object.keys(schema)
-    .find(key => schema[key] && schema[key].alias === fieldName);
+  const originalKey = Object.keys(schema.properties)
+    .find(key => schema.properties[key] && schema.properties[key].alias === fieldName);
 
   return originalKey || fieldName;
 };
@@ -49,6 +49,7 @@ export class Find {
     };
     this.findOne = !!findOne;
     this.schema = schema;
+    this.validate = false;
   }
 
   where(filter) {
@@ -137,6 +138,11 @@ export class Find {
     return this;
   }
 
+  validate() {
+    this.validate = true;
+    return this;
+  }
+
   async exec() {
     const query = {
       where: this.query.filters
@@ -173,12 +179,15 @@ export class Find {
       attributes: this.query.outStatistics ?
         attributes :
         filterAttributes(attributes, {
-          [objectIdField]: {
-            type: Number,
-            alias: 'esriObjectId',
-          },
           ...this.schema,
-        }),
+          properties: {
+            [objectIdField]: {
+              type: 'integer',
+              alias: 'esriObjectId',
+            },
+            ...this.schema.properties,
+          },
+        }, this.validate),
       geometry: this.query.returnGeometry ? {
         ...geometry,
         spatialReference: {
