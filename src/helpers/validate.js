@@ -13,7 +13,11 @@
  * limitations under the License.
  */
 
-import * as Ajv from 'ajv';
+import Ajv from 'ajv';
+
+const ajv = new Ajv({
+  $data: true,
+});
 
 // parse JSON objects and booleans
 export const validate = (attributes, schema) => {
@@ -23,10 +27,6 @@ export const validate = (attributes, schema) => {
       errors: null,
     };
   }
-
-  const ajv = new Ajv({
-    $data: true,
-  });
 
   const validator = ajv.compile(schema);
 
