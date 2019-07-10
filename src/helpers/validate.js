@@ -38,16 +38,14 @@ class ValidationError extends Error {
 }
 
 
+export const getValidator = schema => ajv.compile(schema);
+
+
 // parse JSON objects and booleans
 export const validate = (attributes, schema) => {
-  if (!schema) {
-    return {
-      valid: true,
-      errors: null,
-    };
-  }
+  if (!schema) return null;
 
-  const validator = ajv.compile(schema);
+  const validator = getValidator(schema);
 
   const valid = validator(attributes);
 
