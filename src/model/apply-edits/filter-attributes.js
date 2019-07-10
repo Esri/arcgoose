@@ -23,13 +23,13 @@ import { getPartialSchema } from '../../helpers/get-partial-schema';
 export const filterAttributes = (attributes, schema, partialUpdate) => {
   if (!schema) return attributes;
 
-  const cleanAttributes = parseAliasesWrite(
-    parseDatesWrite(attributes, schema),
+  const cleanAttributes = parseDatesWrite(
+    parseAliasesWrite(attributes, schema),
     schema,
   );
 
   const validationSchema = partialUpdate ?
-    getPartialSchema(schema, Object.keys(attributes)) : schema;
+    getPartialSchema(schema, Object.keys(cleanAttributes)) : schema;
 
   const validationError = validate(cleanAttributes, validationSchema);
 

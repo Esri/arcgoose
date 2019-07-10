@@ -6,7 +6,9 @@ export const getPartialSchema = (schema, fields) => {
     properties: {},
   };
 
-  fields.forEach(outField => newSchema.properties[outField] = schema.properties[outField]);
+  fields
+    .filter(field => schema.properties[field])
+    .forEach(field => newSchema.properties[field] = schema.properties[field]);
 
   return newSchema;
 };

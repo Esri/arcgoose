@@ -21,6 +21,7 @@ export const parseDatesRead = (attributes, schema) => {
   const newAttributes = {};
 
   Object.keys(schema.properties)
+    .filter(key => attributes[key] !== undefined)
     .forEach((key) => {
       try {
         if (schema.properties[key].date) {
@@ -44,6 +45,7 @@ export const parseDatesWrite = (attributes, schema) => {
   const newAttributes = {};
 
   Object.keys(schema.properties)
+    .filter(key => attributes[key] !== undefined)
     .forEach((key) => {
       try {
         if (schema.properties[key].date) {
