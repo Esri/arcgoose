@@ -15,23 +15,23 @@
 
 import { parseNonEsriTypesWrite } from '../../helpers/parse-non-esri-types';
 import { parseAliasesWrite } from '../../helpers/parse-aliases';
-import { parseDefaultValuesWrite } from '../../helpers/parse-default-values';
 import { parseDatesWrite } from '../../helpers/parse-dates';
 import { validate } from '../../helpers/validate';
+import { getPartialSchema } from '../../helpers/get-partial-schema';
 
 
-export const filterAttributes = (attributes, schema) => {
+export const filterAttributes = (attributes, schema, partialUpdate) => {
   if (!schema) return attributes;
 
   const cleanAttributes = parseAliasesWrite(
-     parseDefaultValuesWrite(
-       parseDatesWrite(attributes, schema),
-       schema,
-     ),
-     schema,
-   );
+    parseDatesWrite(attributes, schema),
+    schema,
+  );
 
-  const validationError = validate(cleanAttributes, schema);
+  const validationSchema = partialUpdate ?
+    getPartialSchema(schema, Object.keys(attributes)) : schema;
+
+  const validationError = validate(cleanAttributes, validationSchema);
 
   if (validationError) {
     throw validationError;

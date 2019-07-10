@@ -28,9 +28,7 @@ class ValidationError extends Error {
       Error.captureStackTrace(this, ValidationError);
     }
 
-    console.log(errors);
-    console.log(data);
-    console.log(schema);
+    console.error({ errors, data, schema }); // eslint-disable-line
 
     this.name = 'ValidationError';
     this.errors = errors;

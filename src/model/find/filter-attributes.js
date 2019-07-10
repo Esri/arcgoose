@@ -18,23 +18,15 @@ import { parseAliasesRead } from '../../helpers/parse-aliases';
 import { parseDefaultValuesRead } from '../../helpers/parse-default-values';
 import { parseDatesRead } from '../../helpers/parse-dates';
 import { validate } from '../../helpers/validate';
-
+import { getPartialSchema } from '../../helpers/get-partial-schema';
 
 export const filterAttributes = (attributes, schema, doValidation, outFields) => {
   if (!schema) return attributes;
 
   const cleanAttributes = parseNonEsriTypesRead(attributes, schema);
 
-  if (true || doValidation) {
-    const validationSchema = {
-      ...schema,
-      required: schema.required ?
-        schema.required.filter(requiredField => outFields.includes(requiredField)) : [],
-      properties: {},
-    };
-
-    outFields
-      .forEach(outField => validationSchema.properties[outField] = schema.properties[outField]);
+  if (doValidation) {
+    const validationSchema = getPartialSchema(schema, outFields);
 
     const validationError = validate(cleanAttributes, validationSchema);
 

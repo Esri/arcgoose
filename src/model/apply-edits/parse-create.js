@@ -24,7 +24,7 @@ export const parseCreate = (input, schema) => toArray(input)
     const { geometry, attributes } = object;
     return {
       attributes: {
-        ...filterAttributes(attributes, schema),
+        ...filterAttributes(attributes, schema, false),
         GlobalID: attributes.GlobalID || uuid(),
       },
       geometry: (geometry && geometry.toJSON && geometry.toJSON()) || geometry,
