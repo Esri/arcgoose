@@ -187,7 +187,7 @@ export class Find {
             },
             ...this.schema.properties,
           },
-        }, this.validate),
+        }, this.validate, this.query.outFields),
       geometry: this.query.returnGeometry ? {
         ...geometry,
         spatialReference: {

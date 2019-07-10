@@ -13,6 +13,13 @@
  * limitations under the License.
  */
 
+/* TODO:
+ * These conversions should take into account the esriFieldTypes. E.g., only esriFieldTypeString
+ * can convert to an 'object' and vice-versa.
+ *
+ * Futhermore, these conversions should correctly handle mixed types, e.g.,
+ * type = ['string', 'object'].
+ */
 
 // parse JSON objects and booleans
 export const parseNonEsriTypesRead = (attributes, schema) => {
@@ -23,19 +30,15 @@ export const parseNonEsriTypesRead = (attributes, schema) => {
   Object.keys(schema.properties)
     .forEach((key) => {
       try {
-        switch (schema.properties[key].type) {
-          case 'array':
-          case 'object': {
-            newAttributes[key] = JSON.parse(attributes[key]);
-            break;
-          }
-          case 'boolean': {
-            newAttributes[key] = attributes[key] === 1;
-            break;
-          }
-          default: {
-            newAttributes[key] = attributes[key];
-          }
+        const type = schema.properties[key].type;
+
+        if (type === 'object' || type === 'array' ||
+          type.includes('object') || type.includes('array')) {
+          newAttributes[key] = JSON.parse(attributes[key]);
+        } else if (type === 'boolean') {
+          newAttributes[key] = attributes[key] === 1;
+        } else {
+          newAttributes[key] = attributes[key];
         }
       } catch (e) {
         newAttributes[key] = null;
@@ -55,19 +58,17 @@ export const parseNonEsriTypesWrite = (attributes, schema) => {
   Object.keys(schema.properties)
     .forEach((key) => {
       try {
-        switch (schema.properties[key].type) {
-          case 'array':
-          case 'object': {
-            newAttributes[key] = JSON.stringify(attributes[key]);
-            break;
-          }
-          case 'boolean': {
-            newAttributes[key] = attributes[key] ? 1 : 0;
-            break;
-          }
-          default: {
-            newAttributes[key] = attributes[key];
-          }
+        const type = schema.properties[key].type;
+
+        if (attributes[key] === null) {
+          newAttributes[key] = null;
+        } else if (type === 'object' || type === 'array' ||
+          type.includes('object') || type.includes('array')) {
+          newAttributes[key] = JSON.stringify(attributes[key]);
+        } else if (type === 'boolean') {
+          newAttributes[key] = attributes[key] ? 1 : 0;
+        } else {
+          newAttributes[key] = attributes[key];
         }
       } catch (e) {
         newAttributes[key] = null;

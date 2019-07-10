@@ -31,13 +31,10 @@ export const filterAttributes = (attributes, schema) => {
      schema,
    );
 
-  const {
-     valid,
-     errors,
-   } = validate(cleanAttributes, schema);
+  const validationError = validate(cleanAttributes, schema);
 
-  if (!valid) {
-    throw new Error({ errors });
+  if (validationError) {
+    throw validationError;
   }
 
   return parseNonEsriTypesWrite(cleanAttributes, schema);
