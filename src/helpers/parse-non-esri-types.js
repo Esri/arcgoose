@@ -62,6 +62,8 @@ export const parseNonEsriTypesWrite = (attributes, schema) => {
 
         if (attributes[key] === null) {
           newAttributes[key] = null;
+        } else if (!type) {
+          newAttributes[key] = attributes[key];
         } else if (type === 'object' || type === 'array' ||
           type.includes('object') || type.includes('array')) {
           newAttributes[key] = JSON.stringify(attributes[key]);
