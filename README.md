@@ -316,6 +316,22 @@ export async function fetchTerriers() {
     console.log(terriers.map(terrier => terrier.attributes.name)) // typechecked: not ok
 
 }
+## Authentication
+
+Arcgoose is compatible with [@esri/arcgis-rest-auth](https://github.com/Esri/arcgis-rest-js/blob/master/packages/arcgis-rest-auth).
+
+```javascript
+import { UserSession } from '@esri/arcgis-rest-auth';
+
+const session = new UserSession({
+  username: "casey",
+  password: "123456"
+});
+
+const connection = await arcgoose.connect({ url, authentication: session });
+const Cat = await arcgoose.model(connection.layers.Cats, { name: String });
+
+const cat = await Cat.findOne({ name: 'Grumpy' }).exec();
 ```
 
 ## Issues

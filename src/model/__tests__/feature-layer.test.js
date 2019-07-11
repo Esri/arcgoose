@@ -1,31 +1,24 @@
-import esriLoader from 'esri-loader';
-
 import FeatureLayer from '../feature-layer';
 
+jest.mock('@esri/arcgis-rest-request');
+import { request } from '@esri/arcgis-rest-request';
 
 jest.mock('esri/layers/FeatureLayer', () => {
   const EsriFeatureLayerMock = jest.fn();
   return EsriFeatureLayerMock;
 }, { virtual: true });
 
-jest.mock('esri-loader', () => {
-  const request = jest.fn();
-
-  request.mockImplementation(() => ({ data: 'foobar' }));
-
-  return {
-    request,
-    loadModules: jest.fn(() => Promise.resolve([request])),
-  };
-});
-
-// jest.mock('esri/request',
-//   () => jest.fn().mockImplementation(() => ({ data: 'blab' })),
-//   { virtual: true },
-// );
-
 describe('Edits', () => {
   it('applies an edit to the attributes of one feature', async () => {
+    request.mockReturnValue(Promise.resolve({
+      "updateResults": [
+        {
+          "GlobalId": 1,
+          "success": true
+        }
+      ]
+    }));
+
     const layer = new FeatureLayer({
       url: 'http://blabla.com/layer/0',
       serviceUrl: 'http://blabla.com/layer/',
@@ -38,22 +31,31 @@ describe('Edits', () => {
       .update({ attributes: { GlobalID: '1', name: 'New Name' } })
       .exec();
 
-    expect(esriLoader.request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
-      f: 'json',
-      method: 'post',
-      query: {
-        f: 'json',
+    expect(request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
+      params: {
         useGlobalIds: true,
         rollbackOnFailure: false,
         adds: null,
         updates: '[{"attributes":{"GlobalID":"1","name":"New Name"}}]',
-        deletes: null,
-      },
-      responseType: 'json',
+        deletes: null
+      }
     });
   });
 
   it('applies an edit to the attributes of several features', async () => {
+    request.mockReturnValue(Promise.resolve({
+      "updateResults": [
+        {
+          "GlobalId": 1,
+          "success": true
+        },
+        {
+          "GlobalId": 2,
+          "success": true
+        }
+      ]
+    }));
+
     const layer = new FeatureLayer({
       url: 'http://blabla.com/layer/0',
       serviceUrl: 'http://blabla.com/layer/',
@@ -69,18 +71,14 @@ describe('Edits', () => {
       ])
       .exec();
 
-    expect(esriLoader.request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
-      f: 'json',
-      method: 'post',
-      query: {
-        f: 'json',
+    expect(request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
+      params: {
         useGlobalIds: true,
         rollbackOnFailure: false,
         adds: null,
         updates: '[{"attributes":{"GlobalID":"1","name":"New Name 1"}},{"attributes":{"GlobalID":"2","name":"New Name 2"}}]',
-        deletes: null,
-      },
-      responseType: 'json',
+        deletes: null
+      } 
     });
   });
 });

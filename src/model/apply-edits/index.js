@@ -27,29 +27,23 @@ import {
 } from '../../helpers/request-with-retry';
 
 export class ApplyEdits {
-  static async deleteWhere(featureLayer, where) {
-    const editsResult = await requestWithRetry(`${featureLayer.url}/deleteFeatures`, {
-      query: {
-        f: 'json',
-        where,
-      },
-      method: 'post',
-      responseType: 'json',
-    });
+  static async deleteWhere(featureLayer, where, authentication) {
+    const editsResult = await requestWithRetry(`${featureLayer.url}/deleteFeatures`, authentication, { where });
 
     return {
       layerId: featureLayer.id,
-      deletedFeatures: processResults(editsResult.data.deleteResults),
+      deletedFeatures: processResults(editsResult.deleteResults),
     };
   }
 
-  constructor(featureLayer, schema) {
+  constructor(featureLayer, schema, authentication) {
     this.featureLayer = featureLayer;
     this.schema = schema;
     this.adds = [];
     this.deletes = [];
     this.updates = [];
     this.shouldUseGlobalIds = true;
+    this.authentication = authentication;
   }
 
   add(features) {
@@ -81,6 +75,7 @@ export class ApplyEdits {
     return {
       serviceUrl: this.featureLayer.serviceUrl,
       name: this.featureLayer.name,
+      authentication: this.authentication,
       payload: {
         id: this.featureLayer.id,
         adds: this.adds.length ? this.adds : null,
@@ -101,7 +96,7 @@ export class ApplyEdits {
     }
 
     const query = {
-      f: 'json',
+      authentication: this.authentication,
       useGlobalIds: this.shouldUseGlobalIds,
       rollbackOnFailure: false,
       adds: this.adds.length ? JSON.stringify(this.adds) : null,
@@ -109,20 +104,16 @@ export class ApplyEdits {
       deletes: deleteIds,
     };
 
-    const editsResult = await requestWithRetry(`${this.featureLayer.url}/applyEdits`, {
-      query,
-      method: 'post',
-      responseType: 'json',
-    });
+    const editsResult = await requestWithRetry(`${this.featureLayer.url}/applyEdits`, this.authentication, query);
 
     /* TODO: handle missing data field */
 
     return {
       layerId: this.featureLayer.id,
-      addedFeatures: processResults(editsResult.data.addResults),
-      updatedFeatures: processResults(editsResult.data.updateResults),
-      deletedFeatures: processResults(editsResult.data.deleteResults),
-      addedOIDs: processResultsOIDs(editsResult.data.addResults),
+      addedFeatures: processResults(editsResult.addResults),
+      updatedFeatures: processResults(editsResult.updateResults),
+      deletedFeatures: processResults(editsResult.deleteResults),
+      addedOIDs: processResultsOIDs(editsResult.addResults),
     };
   }
 }

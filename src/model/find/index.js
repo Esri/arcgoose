@@ -38,11 +38,10 @@ const fromAlias = (fieldName, schema) => {
 
 
 export class Find {
-  constructor(featureLayer, { filters, outFields, findOne }, schema) {
+  constructor(featureLayer, { findOne, ...query }, schema) {
     this.featureLayer = featureLayer;
     this.query = {
-      filters,
-      outFields,
+      ...query,
       returnGeometry: false,
       returnCentroid: false,
       inSR: 4326,
@@ -140,7 +139,6 @@ export class Find {
 
   async exec() {
     const query = {
-      f: 'json',
       where: this.query.filters
         .map(filter => `(${filter})`)
         .join(' AND ') || '1=1',
@@ -164,21 +162,18 @@ export class Find {
     const queryUrl = `${this.featureLayer.url}/query`;
 
     if (this.query.returnCountOnly) {
-      const count = await requestWithRetry(queryUrl, {
-        query,
-        method: 'get',
-        responseType: 'json',
-      });
-      return count.data;
+      const count = await requestWithRetry(queryUrl, this.query.authentication, query);
+      return count;
     }
 
-    const featureData = await fetchPagedFeatures(queryUrl, query);
+    const featureData = await fetchPagedFeatures(queryUrl, this.query.authentication, query);
 
+    const objectIdField = featureData.objectIdField;
     const features = featureData.features.map(({ attributes, geometry, centroid }) => ({
       attributes: this.query.outStatistics ?
         attributes :
         filterAttributes(attributes, {
-          [this.featureLayer.objectIdField]: {
+          [objectIdField]: {
             type: Number,
             alias: 'esriObjectId',
           },
