@@ -19,6 +19,19 @@ const ajv = new Ajv({
   $data: true,
 });
 
+
+const applyAliasesToDatapath = (dataPath, schema) => {
+  const dataPathComponents = dataPath.split('.');
+  const field = dataPathComponents[1];
+
+  if (schema.properties[field] && schema.properties[field].alias) {
+    dataPathComponents.splice(1, 1, schema.properties[field].alias);
+  }
+
+  return dataPathComponents.join('.');
+};
+
+
 class ValidationError extends Error {
   constructor(errors = [], data = null, schema = null, ...params) {
     super(...params);
@@ -31,7 +44,10 @@ class ValidationError extends Error {
     console.error({ errors, data, schema }); // eslint-disable-line
 
     this.name = 'ValidationError';
-    this.errors = errors;
+    this.errors = errors.map(({ dataPath, ...remainder }) => ({
+      dataPath: applyAliasesToDatapath(dataPath, schema),
+      ...remainder,
+    }));
     this.data = data;
     this.schema = schema;
   }
