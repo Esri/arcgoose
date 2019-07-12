@@ -20,15 +20,25 @@ const ajv = new Ajv({
 });
 
 
-const applyAliasesToDatapath = (dataPath, schema) => {
-  const dataPathComponents = dataPath.split('.');
-  const field = dataPathComponents[1];
+const applyAliasesToPath = (dataPath, schemaPath, schema) => {
+  const schemaPathComponents = schemaPath.split('/');
+  const field = schemaPathComponents[2];
 
-  if (schema.properties[field] && schema.properties[field].alias) {
-    dataPathComponents.splice(1, 1, schema.properties[field].alias);
+  const alias = schema.properties[field] && schema.properties[field].alias;
+
+
+  if (alias) {
+    schemaPathComponents.splice(2, 1, alias);
+    return {
+      dataPath: `.${alias}${dataPath.slice(field.length + 1)}`,
+      schemaPath: schemaPathComponents.join('/'),
+    };
   }
 
-  return dataPathComponents.join('.');
+  return {
+    dataPath,
+    schemaPath,
+  };
 };
 
 
@@ -44,9 +54,9 @@ class ValidationError extends Error {
     console.error({ errors, data, schema }); // eslint-disable-line
 
     this.name = 'ValidationError';
-    this.errors = errors.map(({ dataPath, ...remainder }) => ({
-      dataPath: applyAliasesToDatapath(dataPath, schema),
+    this.errors = errors.map(({ dataPath, schemaPath, ...remainder }) => ({
       ...remainder,
+      ...applyAliasesToPath(dataPath, schemaPath, schema),
     }));
     this.data = data;
     this.schema = schema;
