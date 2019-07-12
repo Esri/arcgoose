@@ -16,9 +16,11 @@
 import connect from './connect';
 import model from './model';
 import execAll from './model/exec-all';
+import getValidator from './helpers/validate';
 
 export default {
   connect,
   model,
   execAll,
+  getValidator,
 };
