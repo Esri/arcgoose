@@ -17,6 +17,7 @@ import Ajv from 'ajv';
 
 const ajv = new Ajv({
   $data: true,
+  allErrors: true,
 });
 
 
