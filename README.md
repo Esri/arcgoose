@@ -82,7 +82,7 @@ const catSchema = {
       maxLength: 100,
     },
     details: {
-      type: 'object', // 'Details' will be casted from a string to a javascript object
+      type: 'object', // 'details' will be casted from a string to a javascript object
       properties: {
         color: {
           type: 'string',
@@ -95,7 +95,7 @@ const catSchema = {
       }
     }
     friends: {
-      type: 'array', // 'Friends' will be casted from a string to a javascript array
+      type: 'array', // 'friends' will be casted from a string to a javascript array
       items: {
         type: 'string',
       }
