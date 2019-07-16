@@ -83,9 +83,22 @@ const catSchema = {
     },
     details: {
       type: 'object', // 'Details' will be casted from a string to a javascript object
+      properties: {
+        color: {
+          type: 'string',
+          pattern: '^#(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$', // reg exp to match HEX color code
+        },
+        age: {
+          type: 'integer',
+          minimum: 0,
+        }
+      }
     }
     friends: {
       type: 'array', // 'Friends' will be casted from a string to a javascript array
+      items: {
+        type: 'string',
+      }
     }
   }
 };
