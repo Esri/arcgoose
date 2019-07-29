@@ -52,7 +52,7 @@ class ValidationError extends Error {
       Error.captureStackTrace(this, ValidationError);
     }
 
-    console.error({ errors, data, schema }); // eslint-disable-line
+    console.warn({ errors, data, schema }); // eslint-disable-line
 
     this.name = 'ValidationError';
     this.errors = errors.map(({ dataPath, schemaPath, ...remainder }) => ({
