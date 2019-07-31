@@ -60,7 +60,9 @@ export const parseNonEsriTypesWrite = (attributes, schema) => {
       try {
         const type = schema.properties[key].type;
 
-        if (attributes[key] === null) {
+        if (attributes[key] === undefined) {
+          return;
+        } else if (attributes[key] === null) {
           newAttributes[key] = null;
         } else if (!type) {
           newAttributes[key] = attributes[key];
