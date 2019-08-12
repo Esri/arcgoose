@@ -25,7 +25,7 @@ const getQueryFromQueryObject = queryObject => Object.keys(queryObject)
   .join(' AND ');
 
 
-const getFieldsFromSchema = schema => Object.keys(schema);
+const getFieldsFromSchema = schema => Object.keys(schema.properties);
 
 
 export class FeatureLayer {
@@ -49,7 +49,7 @@ export class FeatureLayer {
   find(queryObject) {
     const query = {
       filters: queryObject ? [getQueryFromQueryObject(queryObject)] : [],
-      outFields: getFieldsFromSchema(this.schema),
+      outFields: this.schema ? getFieldsFromSchema(this.schema) : ['*'],
       authentication: this.authentication,
     };
 
@@ -59,7 +59,7 @@ export class FeatureLayer {
   findOne(queryObject) {
     const query = {
       filters: queryObject ? [getQueryFromQueryObject(queryObject)] : [],
-      outFields: getFieldsFromSchema(this.schema),
+      outFields: this.schema ? getFieldsFromSchema(this.schema) : ['*'],
       findOne: true,
       authentication: this.authentication,
     };

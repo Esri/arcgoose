@@ -1,3 +1,7 @@
+/* eslint-disable no-throw-literal */
+
+import { request } from '@esri/arcgis-rest-request';
+
 import requestWithRetry from '../request-with-retry';
 
 import {
@@ -5,19 +9,15 @@ import {
 } from '../../constants';
 
 jest.mock('@esri/arcgis-rest-request');
-import { request } from '@esri/arcgis-rest-request';
 
 describe('request with retry with exceptions', () => {
-  
   it('should be able to request with error', async () => {
     const responseData = { data: '1234' };
 
     request
       .mockImplementationOnce(() => {
         throw {
-          details: {
-            httpStatus: REQUEST_RETRY_CODES[0],
-          },
+          code: REQUEST_RETRY_CODES[0],
         };
       })
       .mockImplementationOnce(() => responseData);
@@ -25,12 +25,13 @@ describe('request with retry with exceptions', () => {
     const url = 'http://foo.com';
     const params = { foo: 'bar' };
     const inputTime = 0;
-    const r = await requestWithRetry(url, params, inputTime);
+    const r = await requestWithRetry(url, null, params, inputTime);
 
     expect(request).toHaveBeenCalledWith(url, {
+      authentication: null,
       params: {
-        foo: 'bar'
-      }
+        foo: 'bar',
+      },
     });
     expect(r).toEqual(responseData);
   });
@@ -39,9 +40,7 @@ describe('request with retry with exceptions', () => {
     request
       .mockImplementationOnce(() => {
         throw {
-          details: {
-            httpStatus: 999,
-          },
+          code: 999,
         };
       });
 
@@ -51,7 +50,7 @@ describe('request with retry with exceptions', () => {
     try {
       await requestWithRetry(url, params, inputTime);
     } catch (err) {
-      expect(err.details.httpStatus).toEqual(999);
+      expect(err.code).toEqual(999);
     }
   });
 });

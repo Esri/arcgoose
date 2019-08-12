@@ -64,23 +64,42 @@ Structure of the `connection` JSON object:
 
 ### Schemas
 
-A schema maps to attributes in the feature layer/table. Schemas are used for default population of
-attributes (similar to `outFields`), and can also be used for type casting and aliases.
+Arcgoose uses schemas for validation and casting of types that are not Esri-supported (e.g., arrays,
+objects, ...). Arcgoose uses the JSON Schema standard, and uses the
+[Ajv](https://github.com/epoberezkin/ajv#api) library for validation.
 
 ```javascript
-export const catSchema = {
-  GlobalID: {
-    type: String,
-  },
-  CatName: {
-    type: String,
-    alias: 'name', // 'CatName' will become 'name' in the returned object
-  },
-  DateOfBirth: {
-    type: Date, // 'DateOfBirth' will be casted to a Date object
-  },
-  Details: {
-    type: Object, // 'Details' will be casted from a string to a JSON object
+const catSchema = {
+  type: 'object', // type should always be object
+  required: ['GlobalID', 'name']
+  properties: {
+    GlobalID: {
+      type: 'string',
+    },
+    name: {
+      type: 'string',
+      minLength: 3,
+      maxLength: 100,
+    },
+    details: {
+      type: 'object', // 'details' will be casted from a string to a javascript object
+      properties: {
+        color: {
+          type: 'string',
+          pattern: '^#(([0-9a-fA-F]{2}){3}|([0-9a-fA-F]){3})$', // reg exp to match HEX color code
+        },
+        age: {
+          type: 'integer',
+          minimum: 0,
+        }
+      }
+    }
+    friends: {
+      type: 'array', // 'friends' will be casted from a string to a javascript array
+      items: {
+        type: 'string',
+      }
+    }
   }
 };
 ```
@@ -91,7 +110,13 @@ Models are fancy constructors compiled from `Schema` definitions. Instances of m
 to query and update layers and tables on the feature server.
 
 ```javascript
-const schema = { name: String };
+const schema = {
+  type: 'object',
+  properties: {
+    name: { type: 'string' }
+  }
+};
+
 const Cat = await arcgoose.model(connection.layers.Cats, schema);
 
 const cat = await Cat.findOne({ name: 'Grumpy' }).exec();

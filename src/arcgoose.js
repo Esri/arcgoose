@@ -16,9 +16,11 @@
 import connect from './connect';
 import model from './model';
 import execAll from './model/exec-all';
+import { validateAttributes } from './model/apply-edits/filter-attributes';
 
 export default {
   connect,
   model,
   execAll,
+  validateAttributes,
 };

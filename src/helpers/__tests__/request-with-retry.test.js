@@ -1,7 +1,8 @@
+import { request } from '@esri/arcgis-rest-request';
+
 import requestWithRetry from '../request-with-retry';
 
 jest.mock('@esri/arcgis-rest-request');
-import { request } from '@esri/arcgis-rest-request';
 
 describe('request with retry', () => {
   it('should be able to request without exception', async () => {
@@ -12,12 +13,13 @@ describe('request with retry', () => {
     const params = { foo: 'bar' };
     const inputTime = 0;
 
-    await expect(requestWithRetry(url, params, inputTime)).resolves.toEqual(responseData);
+    await expect(requestWithRetry(url, null, params, inputTime)).resolves.toEqual(responseData);
 
     expect(request).toHaveBeenCalledWith(url, {
-      params: { 
-        foo: 'bar'
-      }
+      authentication: null,
+      params: {
+        foo: 'bar',
+      },
     });
   });
 });

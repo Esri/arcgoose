@@ -22,7 +22,7 @@ export const parseUpdate = (input, schema) => toArray(input)
   .map((object) => {
     const { geometry, attributes } = object;
     return {
-      attributes: filterAttributes(attributes, schema),
+      attributes: filterAttributes(attributes, schema, true),
       geometry: (geometry && geometry.toJSON && geometry.toJSON()) || geometry,
     };
   });

@@ -1,4 +1,4 @@
-/* Copyright 2018 Esri
+/* Copyright 2019 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,74 +13,36 @@
  * limitations under the License.
  */
 
-// takes array of features
-export const castAttributes = (attributes, schema) => {
+import { parseNonEsriTypesRead } from '../../helpers/parse-non-esri-types';
+import { parseAliasesRead } from '../../helpers/parse-aliases';
+import { parseDefaultValuesRead } from '../../helpers/parse-default-values';
+import { parseDatesRead } from '../../helpers/parse-dates';
+import { validate } from '../../helpers/validate';
+import { getPartialSchema } from '../../helpers/get-partial-schema';
+
+export const filterAttributes = (attributes, schema, doValidation, outFields) => {
   if (!schema) return attributes;
 
-  const newAttributes = { ...attributes };
+  const cleanAttributes = parseNonEsriTypesRead(attributes, schema);
 
-  // parse JSON objects
-  Object.keys(newAttributes)
-    .filter(key => schema[key])
-    .forEach((key) => {
-      // null values should be replaced by defaultValue if present
-      if (newAttributes[key] === null) {
-        newAttributes[key] =
-          schema[key].defaultValue !== undefined ? schema[key].defaultValue : null;
-        return;
-      }
+  if (doValidation) {
+    const validationSchema = getPartialSchema(schema, outFields);
 
-      // some special types need casting
-      try {
-        switch (schema[key].type) {
-          case Object:
-          case 'object': {
-            newAttributes[key] = JSON.parse(newAttributes[key]);
-            break;
-          }
+    const validationError = validate(cleanAttributes, validationSchema);
 
-          case Date:
-          case 'date': {
-            newAttributes[key] = new Date(newAttributes[key]);
-            break;
-          }
+    if (validationError) {
+      throw validationError;
+    }
+  }
 
-          case Boolean:
-          case 'boolean': {
-            newAttributes[key] = newAttributes[key] === 1;
-            break;
-          }
-
-          default: {
-            break;
-          }
-        }
-      } catch (e) {
-        newAttributes[key] = schema[key].defaultValue || null;
-      }
-    });
-
-  return newAttributes;
+  return parseAliasesRead(
+    parseDefaultValuesRead(
+      parseDatesRead(cleanAttributes, schema),
+      schema,
+    ),
+    schema,
+  );
 };
-
-
-export const aliasAttributes = (attributes, schema) => {
-  if (!schema) return attributes;
-
-  const mapping = {};
-  Object.keys(schema)
-    .forEach(key => mapping[key] = schema[key].alias || key);
-
-  const newAttributes = {};
-  Object.keys(attributes)
-    .forEach(key => newAttributes[mapping[key]] = attributes[key]);
-
-  return newAttributes;
-};
-
-
-export const filterAttributes = (attributes, schema) =>
-  aliasAttributes(castAttributes(attributes, schema), schema);
 
 
 export default filterAttributes;
