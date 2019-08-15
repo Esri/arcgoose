@@ -22,7 +22,7 @@ export const parseDefaultValuesRead = (attributes, schema) => {
 
   Object.keys(schema.properties)
     .filter(key => attributes[key] !== undefined)
-    .forEach((key) => {
+    .forEach(key => {
       if (attributes[key] === null && schema.properties[key].defaultValue) {
         newAttributes[key] = schema.properties[key].defaultValue;
       } else {

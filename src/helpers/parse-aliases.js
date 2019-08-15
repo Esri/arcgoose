@@ -22,7 +22,7 @@ export const parseAliasesRead = (attributes, schema) => {
 
   Object.keys(schema.properties)
     .filter(key => attributes[key] !== undefined)
-    .forEach((key) => {
+    .forEach(key => {
       if (schema.properties[key].alias) {
         newAttributes[schema.properties[key].alias] = attributes[key];
       } else {
@@ -41,7 +41,7 @@ export const parseAliasesWrite = (attributes, schema) => {
   const newAttributes = {};
 
   Object.keys(schema.properties)
-    .forEach((key) => {
+    .forEach(key => {
       if (schema.properties[key].alias && attributes[schema.properties[key].alias] !== undefined) {
         newAttributes[key] = attributes[schema.properties[key].alias];
       } else if (attributes[key] !== undefined) {

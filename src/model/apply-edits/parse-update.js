@@ -19,7 +19,7 @@ const toArray = input => (Array.isArray(input) ? input : [input]);
 
 // takes array of features
 export const parseUpdate = (input, schema) => toArray(input)
-  .map((object) => {
+  .map(object => {
     const { geometry, attributes } = object;
     return {
       attributes: filterAttributes(attributes, schema, true),
