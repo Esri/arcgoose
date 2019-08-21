@@ -25,10 +25,10 @@ import {
 
 const CHUNK_SIZE = 500;
 
-const flattenEditHandles = (handleArray) => {
+const flattenEditHandles = handleArray => {
   const editsArray = [];
 
-  handleArray.forEach((handle) => {
+  handleArray.forEach(handle => {
     editsArray.push(...(handle.payload.adds || []).map(payload => ({
       id: handle.payload.id,
       type: 'adds',
@@ -61,7 +61,7 @@ const expandEditsId = (id, editsArray) => ({
   updates: expandEditsSingle(editsArray, 'updates'),
 });
 
-const expandEdits = (editsArray) => {
+const expandEdits = editsArray => {
   const edits = [];
   const ids = new Set(editsArray.map(i => i.id));
   ids.forEach(id => edits.push(expandEditsId(id, editsArray.filter(i => i.id === id))));
@@ -69,7 +69,7 @@ const expandEdits = (editsArray) => {
 };
 
 
-const getChunks = (inputArray) => {
+const getChunks = inputArray => {
   const chunks = [];
   let i = 0;
   const n = inputArray.length;

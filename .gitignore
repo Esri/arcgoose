@@ -1,8 +1,4 @@
 node_modules/*
-lib/*
 dist/*
-deploy/*
-target/*
 .vscode/*
 .DS_Store
-package-lock.json

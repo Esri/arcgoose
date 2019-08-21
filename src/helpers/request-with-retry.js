@@ -20,7 +20,7 @@ import {
   REQUEST_RETRY_MESSAGES,
 } from '../constants';
 
-const wait = timeout => new Promise((resolve) => {
+const wait = timeout => new Promise(resolve => {
   setTimeout(() => {
     resolve();
   }, timeout);
