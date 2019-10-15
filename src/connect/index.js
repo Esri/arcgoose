@@ -30,6 +30,7 @@ export default async ({ url, portal, portalItemId, authentication }) => {
     authentication,
     type: 'Feature Service',
     url: featureService.url,
+    access: featureService.access,
     capabilities: {
       create: service.capabilities.includes('Create'),
       query: service.capabilities.includes('Query'),
