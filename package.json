@@ -7,7 +7,7 @@
   "scripts": {
     "build": "webpack --config webpack.prod.js",
     "test": "jest",
-    "lint": "./node_modules/.bin/eslint --ext .jsx,.js src/**"
+    "lint": "eslint src/**"
   },
   "author": "Michael Van den Bergh",
   "license": "MIT",
@@ -23,7 +23,7 @@
     "@babel/preset-env": "^7.5.5",
     "@babel/runtime": "^7.5.5",
     "babel-loader": "^8.0.6",
-    "eslint": "^6.1.0",
+    "eslint": "^6.6.0",
     "eslint-config-airbnb-base": "^14.0.0",
     "eslint-loader": "^2.2.1",
     "eslint-plugin-import": "^2.18.2",
