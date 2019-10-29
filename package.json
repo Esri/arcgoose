@@ -1,6 +1,6 @@
 {
   "name": "arcgoose",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "description": "",
   "main": "dist/arcgoose.js",
   "module": "dist/arcgoose.js",
