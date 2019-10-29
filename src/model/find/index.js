@@ -174,7 +174,7 @@ export class Find {
 
     const featureData = await fetchPagedFeatures(queryUrl, this.query.authentication, query);
 
-    const objectIdField = featureData.objectIdField;
+    const objectIdField = featureData.objectIdFieldName;
     const features = featureData.features.map(({ attributes, geometry, centroid }) => ({
       ...(this.query.outStatistics ?
         { attributes } :
