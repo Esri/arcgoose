@@ -25,23 +25,25 @@ export const filterAttributes = (attributes, schema, doValidation, outFields) =>
 
   const cleanAttributes = parseNonEsriTypesRead(attributes, schema);
 
+  let validationError;
+
   if (doValidation) {
     const validationSchema = getPartialSchema(schema, outFields);
-
-    const validationError = validate(cleanAttributes, validationSchema);
-
-    if (validationError) {
-      throw validationError;
-    }
+    validationError = validate(cleanAttributes, validationSchema);
   }
 
-  return parseAliasesRead(
+  const parsedAttributes = parseAliasesRead(
     parseDefaultValuesRead(
       parseDatesRead(cleanAttributes, schema),
       schema,
     ),
     schema,
   );
+
+  return {
+    attributes: parsedAttributes,
+    ...(doValidation ? { validation: validationError } : null),
+  };
 };
 
 
