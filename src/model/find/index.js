@@ -49,7 +49,7 @@ export class Find {
     };
     this.findOne = !!findOne;
     this.schema = schema;
-    this.validate = false;
+    this.validation = false;
   }
 
   where(filter) {
@@ -139,7 +139,7 @@ export class Find {
   }
 
   validate() {
-    this.validate = true;
+    this.validation = true;
     return this;
   }
 
@@ -176,8 +176,8 @@ export class Find {
 
     const objectIdField = featureData.objectIdField;
     const features = featureData.features.map(({ attributes, geometry, centroid }) => ({
-      attributes: this.query.outStatistics ?
-        attributes :
+      ...(this.query.outStatistics ?
+        { attributes } :
         filterAttributes(attributes, {
           ...this.schema,
           properties: {
@@ -187,7 +187,7 @@ export class Find {
             },
             ...this.schema.properties,
           },
-        }, this.validate, this.query.outFields),
+        }, this.validation, this.query.outFields)),
       geometry: this.query.returnGeometry ? {
         ...geometry,
         spatialReference: {
