@@ -23,6 +23,7 @@ export const fetchPagedFeatures = async (url, authentication, query, inputTime) 
   let exceededTransferLimit = true;
   const features = [];
   let spatialReference = null;
+  let objectIdFieldName = null;
 
   let recordCount = query.resultRecordCount;
   let offset = query.resultOffset;
@@ -33,6 +34,7 @@ export const fetchPagedFeatures = async (url, authentication, query, inputTime) 
 
     features.push(...findResult.features);
     spatialReference = findResult.spatialReference;
+    objectIdFieldName = findResult.objectIdFieldName;
 
     exceededTransferLimit = findResult.exceededTransferLimit === true;
 
@@ -58,6 +60,7 @@ export const fetchPagedFeatures = async (url, authentication, query, inputTime) 
   return {
     features,
     spatialReference,
+    objectIdFieldName,
   };
 };
 
