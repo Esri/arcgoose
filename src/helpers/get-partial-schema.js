@@ -1,4 +1,6 @@
 export const getPartialSchema = (schema, fields) => {
+  if (!fields || (fields.length === 1 && fields[0] === '*')) return schema;
+
   const newSchema = {
     ...schema,
     required: schema.required ?
