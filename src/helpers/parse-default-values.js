@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 // parse JSON objects and booleans
 export const parseDefaultValuesRead = (attributes, schema) => {
   if (!schema) return attributes;
@@ -23,8 +22,8 @@ export const parseDefaultValuesRead = (attributes, schema) => {
   Object.keys(schema.properties)
     .filter(key => attributes[key] !== undefined)
     .forEach(key => {
-      if (attributes[key] === null && schema.properties[key].defaultValue) {
-        newAttributes[key] = schema.properties[key].defaultValue;
+      if (attributes[key] === null && schema.properties[key].default) {
+        newAttributes[key] = schema.properties[key].default;
       } else {
         newAttributes[key] = attributes[key];
       }
@@ -32,6 +31,5 @@ export const parseDefaultValuesRead = (attributes, schema) => {
 
   return newAttributes;
 };
-
 
 export default parseDefaultValuesRead;
