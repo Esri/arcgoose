@@ -72,9 +72,13 @@ export const getValidator = schema => ajv.compile(schema);
 export const validate = (attributes, schema) => {
   if (!schema) return null;
 
+  ajv.addSchema(schema);
+
   const validator = getValidator(schema);
 
   const valid = validator(attributes);
+
+  ajv.removeSchema(schema);
 
   return valid ? null : new ValidationError(validator.errors, attributes, schema);
 };
