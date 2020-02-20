@@ -43,7 +43,7 @@ describe('Edits', () => {
     expect(request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
       params: {
         useGlobalIds: true,
-        rollbackOnFailure: false,
+        rollbackOnFailure: true,
         adds: null,
         updates: '[{"attributes":{"GlobalID":"1","name":"New Name"}}]',
         deletes: null,
@@ -90,7 +90,7 @@ describe('Edits', () => {
     expect(request).toHaveBeenCalledWith('http://blabla.com/layer/0/applyEdits', {
       params: {
         useGlobalIds: true,
-        rollbackOnFailure: false,
+        rollbackOnFailure: true,
         adds: null,
         updates: '[{"attributes":{"GlobalID":"1","name":"New Name 1"}},{"attributes":{"GlobalID":"2","name":"New Name 2"}}]',
         deletes: null,

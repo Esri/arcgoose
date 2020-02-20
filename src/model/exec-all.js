@@ -97,7 +97,7 @@ export default async (handleArray, progressCallback) => {
     const edits = expandEdits(editChunks[i]);
     const query = {
       useGlobalIds: true,
-      rollbackOnFailure: false,
+      rollbackOnFailure: true,
       edits: JSON.stringify(edits),
     };
 

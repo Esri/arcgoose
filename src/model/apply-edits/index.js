@@ -98,7 +98,7 @@ export class ApplyEdits {
     const query = {
       authentication: this.authentication,
       useGlobalIds: this.shouldUseGlobalIds,
-      rollbackOnFailure: false,
+      rollbackOnFailure: true,
       adds: this.adds.length ? JSON.stringify(this.adds) : null,
       updates: this.updates.length ? JSON.stringify(this.updates) : null,
       deletes: deleteIds,
