@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 // parse JSON objects and booleans
 export const parseDatesRead = (attributes, schema) => {
   if (!schema) return attributes;
@@ -24,7 +23,7 @@ export const parseDatesRead = (attributes, schema) => {
     .filter(key => attributes[key] !== undefined)
     .forEach(key => {
       try {
-        if (schema.properties[key].date) {
+        if (schema.properties[key].format === "datetime") {
           newAttributes[key] = new Date(attributes[key]);
         } else {
           newAttributes[key] = attributes[key];
@@ -37,7 +36,6 @@ export const parseDatesRead = (attributes, schema) => {
   return newAttributes;
 };
 
-
 // stringify JSON objects and cast booleans to integers
 export const parseDatesWrite = (attributes, schema) => {
   if (!schema) return attributes;
@@ -48,7 +46,7 @@ export const parseDatesWrite = (attributes, schema) => {
     .filter(key => attributes[key] !== undefined)
     .forEach(key => {
       try {
-        if (schema.properties[key].date) {
+        if (schema.properties[key].format === "datetime") {
           newAttributes[key] = attributes[key].getTime();
         } else {
           newAttributes[key] = attributes[key];
