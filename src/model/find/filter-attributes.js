@@ -16,7 +16,6 @@
 import { parseNonEsriTypesRead } from '../../helpers/parse-non-esri-types';
 import { parseAliasesRead } from '../../helpers/parse-aliases';
 import { parseDefaultValuesRead } from '../../helpers/parse-default-values';
-import { parseDatesRead } from '../../helpers/parse-dates';
 import { validate } from '../../helpers/validate';
 import { getPartialSchema } from '../../helpers/get-partial-schema';
 
@@ -33,10 +32,7 @@ export const filterAttributes = (attributes, schema, doValidation, outFields) =>
   }
 
   const parsedAttributes = parseAliasesRead(
-    parseDefaultValuesRead(
-      parseDatesRead(cleanAttributes, schema),
-      schema,
-    ),
+    parseDefaultValuesRead(cleanAttributes, schema),
     schema,
   );
 
