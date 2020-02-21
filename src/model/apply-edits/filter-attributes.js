@@ -15,7 +15,6 @@
 
 import { parseNonEsriTypesWrite } from '../../helpers/parse-non-esri-types';
 import { parseAliasesWrite } from '../../helpers/parse-aliases';
-import { parseDatesWrite } from '../../helpers/parse-dates';
 import { validate } from '../../helpers/validate';
 import { getPartialSchema } from '../../helpers/get-partial-schema';
 
@@ -23,10 +22,7 @@ import { getPartialSchema } from '../../helpers/get-partial-schema';
 export const validateAttributes = (attributes, schema, partialUpdate) => {
   if (!schema) return attributes;
 
-  const cleanAttributes = parseDatesWrite(
-    parseAliasesWrite(attributes, schema),
-    schema,
-  );
+  const cleanAttributes = parseAliasesWrite(attributes, schema);
 
   const validationSchema = partialUpdate ?
     getPartialSchema(schema, Object.keys(cleanAttributes)) : schema;
@@ -38,10 +34,7 @@ export const validateAttributes = (attributes, schema, partialUpdate) => {
 export const filterAttributes = (attributes, schema, partialUpdate) => {
   if (!schema) return attributes;
 
-  const cleanAttributes = parseDatesWrite(
-    parseAliasesWrite(attributes, schema),
-    schema,
-  );
+  const cleanAttributes = parseAliasesWrite(attributes, schema);
 
   const validationSchema = partialUpdate ?
     getPartialSchema(schema, Object.keys(cleanAttributes)) : schema;
