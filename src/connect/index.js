@@ -34,6 +34,8 @@ export default async ({ url, portal, portalItemId, authentication }) => {
     owner: featureService.owner,
     isOrgItem: featureService.isOrgItem,
     orgId: featureService.orgId,
+    typeKeywords: featureService.typeKeywords,
+    properties: featureService.properties,
     capabilities: {
       create: service.capabilities.includes('Create'),
       query: service.capabilities.includes('Query'),
