@@ -30,8 +30,9 @@ export const parseNonEsriTypesRead = (attributes, schema) => {
   Object.keys(schema.properties)
     .forEach(key => {
       try {
-        const type = schema.properties[key].type;
+        if (attributes[key] === undefined) return;
 
+        const type = schema.properties[key].type;
         if (type === 'object' || type === 'array' ||
           type.includes('object') || type.includes('array')) {
           newAttributes[key] = JSON.parse(attributes[key]);
