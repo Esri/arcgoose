@@ -1,4 +1,4 @@
-/* Copyright 2018 Esri
+/* Copyright 2020 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,33 +13,33 @@
  * limitations under the License.
  */
 
-import { parseNonEsriTypesWrite } from '../../helpers/parse-non-esri-types';
-import { parseAliasesWrite } from '../../helpers/parse-aliases';
-import { validate } from '../../helpers/validate';
-import { getPartialSchema } from '../../helpers/get-partial-schema';
-
+import { parseNonEsriTypesWrite } from "../../helpers/parse-non-esri-types";
+import { parseAliasesWrite } from "../../helpers/parse-aliases";
+import { validate, validateWithValidator } from "../../helpers/validate";
+import { getPartialSchema } from "../../helpers/get-partial-schema";
 
 export const validateAttributes = (attributes, schema, partialUpdate) => {
   if (!schema) return attributes;
 
   const cleanAttributes = parseAliasesWrite(attributes, schema);
 
-  const validationSchema = partialUpdate ?
-    getPartialSchema(schema, Object.keys(cleanAttributes)) : schema;
+  const validationSchema = partialUpdate
+    ? getPartialSchema(schema, Object.keys(cleanAttributes))
+    : schema;
 
   return validate(cleanAttributes, validationSchema);
 };
 
-
-export const filterAttributes = (attributes, schema, partialUpdate) => {
-  if (!schema) return attributes;
+export const filterAttributes = (attributes, schema, validator) => {
+  if (!validator) return attributes;
 
   const cleanAttributes = parseAliasesWrite(attributes, schema);
 
-  const validationSchema = partialUpdate ?
-    getPartialSchema(schema, Object.keys(cleanAttributes)) : schema;
-
-  const validationError = validate(cleanAttributes, validationSchema);
+  const validationError = validateWithValidator(
+    cleanAttributes,
+    validator,
+    schema
+  );
 
   if (validationError) {
     throw validationError;

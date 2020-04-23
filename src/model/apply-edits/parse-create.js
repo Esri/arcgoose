@@ -1,4 +1,4 @@
-/* Copyright 2018 Esri
+/* Copyright 2020 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,23 +13,27 @@
  * limitations under the License.
  */
 
-import uuid from 'uuid/v4';
+import uuid from "uuid/v4";
+import { ajv } from "../../helpers/validate";
 
-import { filterAttributes } from './filter-attributes';
+import { filterAttributes } from "./filter-attributes";
 
-const toArray = input => (Array.isArray(input) ? input : [input]);
+const toArray = (input) => (Array.isArray(input) ? input : [input]);
 
 // takes array of features
-export const parseCreate = (input, schema) => toArray(input)
-  .map(object => {
+export const parseCreate = (input, schema) => {
+  const validator = schema ? ajv.compile(schema) : null;
+
+  return toArray(input).map((object) => {
     const { geometry, attributes } = object;
     return {
       attributes: {
-        ...filterAttributes(attributes, schema, false),
+        ...filterAttributes(attributes, schema, validator),
         GlobalID: attributes.GlobalID || uuid(),
       },
       geometry: (geometry && geometry.toJSON && geometry.toJSON()) || geometry,
     };
   });
+};
 
 export default parseCreate;

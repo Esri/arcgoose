@@ -13,34 +13,31 @@
  * limitations under the License.
  */
 
-import { parseNonEsriTypesRead } from '../../helpers/parse-non-esri-types';
-import { parseAliasesRead } from '../../helpers/parse-aliases';
-import { parseDefaultValuesRead } from '../../helpers/parse-default-values';
-import { validate } from '../../helpers/validate';
-import { getPartialSchema } from '../../helpers/get-partial-schema';
+import { parseNonEsriTypesRead } from "../../helpers/parse-non-esri-types";
+import { parseAliasesRead } from "../../helpers/parse-aliases";
+import { parseDefaultValuesRead } from "../../helpers/parse-default-values";
+import { validateWithValidator } from "../../helpers/validate";
 
-export const filterAttributes = (attributes, schema, doValidation, outFields) => {
+export const filterAttributes = (attributes, schema, validator) => {
   if (!schema) return attributes;
 
   const cleanAttributes = parseNonEsriTypesRead(attributes, schema);
 
   let validationError;
 
-  if (doValidation) {
-    const validationSchema = getPartialSchema(schema, outFields);
-    validationError = validate(cleanAttributes, validationSchema);
+  if (validator) {
+    validationError = validateWithValidator(cleanAttributes, validator, schema);
   }
 
   const parsedAttributes = parseAliasesRead(
     parseDefaultValuesRead(cleanAttributes, schema),
-    schema,
+    schema
   );
 
   return {
     attributes: parsedAttributes,
-    ...(doValidation ? { validation: validationError } : null),
+    ...(validator ? { validation: validationError } : null),
   };
 };
-
 
 export default filterAttributes;

@@ -12,21 +12,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { request } from '@esri/arcgis-rest-request';
+import { request } from "@esri/arcgis-rest-request";
 
 import {
   REQUEST_MAX_RETRIES,
   REQUEST_RETRY_CODES,
   REQUEST_RETRY_MESSAGES,
-} from '../constants';
+} from "../constants";
 
-const wait = timeout => new Promise(resolve => {
-  setTimeout(() => {
-    resolve();
-  }, timeout);
-});
+const wait = (timeout) =>
+  new Promise((resolve) => {
+    setTimeout(() => {
+      resolve();
+    }, timeout);
+  });
 
-export const requestWithRetry = async (url, authentication, params, inputTime) => {
+export const requestWithRetry = async (
+  url,
+  authentication,
+  params,
+  inputTime
+) => {
   const time = inputTime ? inputTime + 1 : 1;
   try {
     return await request(url, { params, authentication });
@@ -34,17 +40,19 @@ export const requestWithRetry = async (url, authentication, params, inputTime) =
     // eslint-disable-next-line
     console.log(err);
 
-    if (time > REQUEST_MAX_RETRIES) throw (err);
+    if (time > REQUEST_MAX_RETRIES) throw err;
 
-    if (REQUEST_RETRY_MESSAGES.includes(err.message) ||
-      REQUEST_RETRY_CODES.includes(err.code)) {
+    if (
+      REQUEST_RETRY_MESSAGES.includes(err.message) ||
+      REQUEST_RETRY_CODES.includes(err.code)
+    ) {
       // eslint-disable-next-line
       console.log(`ArcGoose: waiting ${2 ** time} ms before retrying query...`);
       await wait(2 ** time);
       return requestWithRetry(url, authentication, params, time);
     }
 
-    throw (err);
+    throw err;
   }
 };
 
