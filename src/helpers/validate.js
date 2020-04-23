@@ -13,26 +13,24 @@
  * limitations under the License.
  */
 
-import Ajv from 'ajv';
+import Ajv from "ajv";
 
 const ajv = new Ajv({
   $data: true,
   allErrors: true,
 });
 
-
 const applyAliasesToPath = (dataPath, schemaPath, schema) => {
-  const schemaPathComponents = schemaPath.split('/');
+  const schemaPathComponents = schemaPath.split("/");
   const field = schemaPathComponents[2];
 
   const alias = schema.properties[field] && schema.properties[field].alias;
-
 
   if (alias) {
     schemaPathComponents.splice(2, 1, alias);
     return {
       dataPath: `.${alias}${dataPath.slice(field.length + 1)}`,
-      schemaPath: schemaPathComponents.join('/'),
+      schemaPath: schemaPathComponents.join("/"),
     };
   }
 
@@ -41,7 +39,6 @@ const applyAliasesToPath = (dataPath, schemaPath, schema) => {
     schemaPath,
   };
 };
-
 
 class ValidationError extends Error {
   constructor(errors = [], data = null, schema = null, ...params) {
@@ -54,7 +51,7 @@ class ValidationError extends Error {
 
     console.warn({ errors, data, schema }); // eslint-disable-line
 
-    this.name = 'ValidationError';
+    this.name = "ValidationError";
     this.errors = errors.map(({ dataPath, schemaPath, ...remainder }) => ({
       ...remainder,
       ...applyAliasesToPath(dataPath, schemaPath, schema),
@@ -64,9 +61,7 @@ class ValidationError extends Error {
   }
 }
 
-
-export const getValidator = schema => ajv.compile(schema);
-
+export const getValidator = (schema) => ajv.compile(schema);
 
 // parse JSON objects and booleans
 export const validate = (attributes, schema) => {
@@ -80,8 +75,9 @@ export const validate = (attributes, schema) => {
 
   ajv.removeSchema(schema);
 
-  return valid ? null : new ValidationError(validator.errors, attributes, schema);
+  return valid
+    ? null
+    : new ValidationError(validator.errors, attributes, schema);
 };
-
 
 export default validate;

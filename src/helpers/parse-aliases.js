@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-
 // parse JSON objects and booleans
 export const parseAliasesRead = (attributes, schema) => {
   if (!schema) return attributes;
@@ -21,8 +20,8 @@ export const parseAliasesRead = (attributes, schema) => {
   const newAttributes = {};
 
   Object.keys(schema.properties)
-    .filter(key => attributes[key] !== undefined)
-    .forEach(key => {
+    .filter((key) => attributes[key] !== undefined)
+    .forEach((key) => {
       if (schema.properties[key].alias) {
         newAttributes[schema.properties[key].alias] = attributes[key];
       } else {
@@ -33,21 +32,22 @@ export const parseAliasesRead = (attributes, schema) => {
   return newAttributes;
 };
 
-
 // stringify JSON objects and cast booleans to integers
 export const parseAliasesWrite = (attributes, schema) => {
   if (!schema) return attributes;
 
   const newAttributes = {};
 
-  Object.keys(schema.properties)
-    .forEach(key => {
-      if (schema.properties[key].alias && attributes[schema.properties[key].alias] !== undefined) {
-        newAttributes[key] = attributes[schema.properties[key].alias];
-      } else if (attributes[key] !== undefined) {
-        newAttributes[key] = attributes[key];
-      }
-    });
+  Object.keys(schema.properties).forEach((key) => {
+    if (
+      schema.properties[key].alias &&
+      attributes[schema.properties[key].alias] !== undefined
+    ) {
+      newAttributes[key] = attributes[schema.properties[key].alias];
+    } else if (attributes[key] !== undefined) {
+      newAttributes[key] = attributes[key];
+    }
+  });
 
   return newAttributes;
 };

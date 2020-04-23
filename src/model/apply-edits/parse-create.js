@@ -13,15 +13,15 @@
  * limitations under the License.
  */
 
-import uuid from 'uuid/v4';
+import uuid from "uuid/v4";
 
-import { filterAttributes } from './filter-attributes';
+import { filterAttributes } from "./filter-attributes";
 
-const toArray = input => (Array.isArray(input) ? input : [input]);
+const toArray = (input) => (Array.isArray(input) ? input : [input]);
 
 // takes array of features
-export const parseCreate = (input, schema) => toArray(input)
-  .map(object => {
+export const parseCreate = (input, schema) =>
+  toArray(input).map((object) => {
     const { geometry, attributes } = object;
     return {
       attributes: {

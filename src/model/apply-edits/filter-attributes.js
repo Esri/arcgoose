@@ -13,31 +13,31 @@
  * limitations under the License.
  */
 
-import { parseNonEsriTypesWrite } from '../../helpers/parse-non-esri-types';
-import { parseAliasesWrite } from '../../helpers/parse-aliases';
-import { validate } from '../../helpers/validate';
-import { getPartialSchema } from '../../helpers/get-partial-schema';
-
+import { parseNonEsriTypesWrite } from "../../helpers/parse-non-esri-types";
+import { parseAliasesWrite } from "../../helpers/parse-aliases";
+import { validate } from "../../helpers/validate";
+import { getPartialSchema } from "../../helpers/get-partial-schema";
 
 export const validateAttributes = (attributes, schema, partialUpdate) => {
   if (!schema) return attributes;
 
   const cleanAttributes = parseAliasesWrite(attributes, schema);
 
-  const validationSchema = partialUpdate ?
-    getPartialSchema(schema, Object.keys(cleanAttributes)) : schema;
+  const validationSchema = partialUpdate
+    ? getPartialSchema(schema, Object.keys(cleanAttributes))
+    : schema;
 
   return validate(cleanAttributes, validationSchema);
 };
-
 
 export const filterAttributes = (attributes, schema, partialUpdate) => {
   if (!schema) return attributes;
 
   const cleanAttributes = parseAliasesWrite(attributes, schema);
 
-  const validationSchema = partialUpdate ?
-    getPartialSchema(schema, Object.keys(cleanAttributes)) : schema;
+  const validationSchema = partialUpdate
+    ? getPartialSchema(schema, Object.keys(cleanAttributes))
+    : schema;
 
   const validationError = validate(cleanAttributes, validationSchema);
 

@@ -3,13 +3,11 @@
  * Specifying them as 'core-modules' will prevent ESLint from stumbling over them.
  */
 module.exports = {
-  "rules": {
+  rules: {
     "import/no-extraneous-dependencies": 0,
     "import/extensions": 0,
   },
-  "settings": {
-    "import/core-modules": [
-      "esri/request",
-    ],
+  settings: {
+    "import/core-modules": ["esri/request"],
   },
 };

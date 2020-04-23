@@ -15,7 +15,4 @@
 
 export const REQUEST_MAX_RETRIES = 15;
 export const REQUEST_RETRY_CODES = [408, 502, 503, 504];
-export const REQUEST_RETRY_MESSAGES = [
-  'Failed to fetch',
-  'Timeout exceeded',
-];
+export const REQUEST_RETRY_MESSAGES = ["Failed to fetch", "Timeout exceeded"];

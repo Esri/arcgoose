@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import connect from './connect';
-import model from './model';
-import execAll from './model/exec-all';
-import { validateAttributes } from './model/apply-edits/filter-attributes';
+import connect from "./connect";
+import model from "./model";
+import execAll from "./model/exec-all";
+import { validateAttributes } from "./model/apply-edits/filter-attributes";
 
 export default {
   connect,

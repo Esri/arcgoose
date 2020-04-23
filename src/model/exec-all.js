@@ -13,74 +13,84 @@
  * limitations under the License.
  */
 
-import {
-  requestWithRetry,
-} from '../helpers/request-with-retry';
+import { requestWithRetry } from "../helpers/request-with-retry";
 
 import {
   processResults,
   processResultsOIDs,
-} from './apply-edits/process-results';
-
+} from "./apply-edits/process-results";
 
 const CHUNK_SIZE = 500;
 
-const flattenEditHandles = handleArray => {
+const flattenEditHandles = (handleArray) => {
   const editsArray = [];
 
-  handleArray.forEach(handle => {
-    editsArray.push(...(handle.payload.adds || []).map(payload => ({
-      id: handle.payload.id,
-      type: 'adds',
-      payload,
-    })));
-    editsArray.push(...(handle.payload.deletes || []).map(payload => ({
-      id: handle.payload.id,
-      type: 'deletes',
-      payload,
-    })));
-    editsArray.push(...(handle.payload.updates || []).map(payload => ({
-      id: handle.payload.id,
-      type: 'updates',
-      payload,
-    })));
+  handleArray.forEach((handle) => {
+    editsArray.push(
+      ...(handle.payload.adds || []).map((payload) => ({
+        id: handle.payload.id,
+        type: "adds",
+        payload,
+      }))
+    );
+    editsArray.push(
+      ...(handle.payload.deletes || []).map((payload) => ({
+        id: handle.payload.id,
+        type: "deletes",
+        payload,
+      }))
+    );
+    editsArray.push(
+      ...(handle.payload.updates || []).map((payload) => ({
+        id: handle.payload.id,
+        type: "updates",
+        payload,
+      }))
+    );
   });
 
   return editsArray;
 };
 
 const expandEditsSingle = (editsArray, type) => {
-  const outputArray = editsArray.filter(i => i.type === type).map(i => i.payload);
+  const outputArray = editsArray
+    .filter((i) => i.type === type)
+    .map((i) => i.payload);
   return outputArray.length > 0 ? outputArray : null;
 };
 
 const expandEditsId = (id, editsArray) => ({
   id,
-  adds: expandEditsSingle(editsArray, 'adds'),
-  deletes: expandEditsSingle(editsArray, 'deletes'),
-  updates: expandEditsSingle(editsArray, 'updates'),
+  adds: expandEditsSingle(editsArray, "adds"),
+  deletes: expandEditsSingle(editsArray, "deletes"),
+  updates: expandEditsSingle(editsArray, "updates"),
 });
 
-const expandEdits = editsArray => {
+const expandEdits = (editsArray) => {
   const edits = [];
-  const ids = new Set(editsArray.map(i => i.id));
-  ids.forEach(id => edits.push(expandEditsId(id, editsArray.filter(i => i.id === id))));
+  const ids = new Set(editsArray.map((i) => i.id));
+  ids.forEach((id) =>
+    edits.push(
+      expandEditsId(
+        id,
+        editsArray.filter((i) => i.id === id)
+      )
+    )
+  );
   return edits;
 };
 
-
-const getChunks = inputArray => {
+const getChunks = (inputArray) => {
   const chunks = [];
   let i = 0;
   const n = inputArray.length;
 
   while (i < n) {
-    chunks.push(inputArray.slice(i, i += CHUNK_SIZE));
+    chunks.push(inputArray.slice(i, (i += CHUNK_SIZE)));
   }
 
   return chunks;
 };
-
 
 export default async (handleArray, progressCallback) => {
   if (handleArray.length < 1) return null;
@@ -102,7 +112,11 @@ export default async (handleArray, progressCallback) => {
     };
 
     // eslint-disable-next-line
-    const result = await requestWithRetry(`${serviceUrl}/applyEdits`, authentication, query);
+    const result = await requestWithRetry(
+      `${serviceUrl}/applyEdits`,
+      authentication,
+      query
+    );
 
     editsResultsArray.push(result);
 
@@ -113,14 +127,20 @@ export default async (handleArray, progressCallback) => {
 
   // TODO: this should handle if layer.id already exists in editsResult
   const editsResults = [];
-  editsResultsArray.forEach(result => editsResults.push(...result.map(layer => ({
-    layerId: layer.id,
-    layerName: (handleArray.find(handle => handle.payload.id === layer.id) || {}).name,
-    addedFeatures: processResults(layer.addResults),
-    updatedFeatures: processResults(layer.updateResults),
-    deletedFeatures: processResults(layer.deleteResults),
-    addedOIDs: processResultsOIDs(layer.addResults),
-  }))));
+  editsResultsArray.forEach((result) =>
+    editsResults.push(
+      ...result.map((layer) => ({
+        layerId: layer.id,
+        layerName: (
+          handleArray.find((handle) => handle.payload.id === layer.id) || {}
+        ).name,
+        addedFeatures: processResults(layer.addResults),
+        updatedFeatures: processResults(layer.updateResults),
+        deletedFeatures: processResults(layer.deleteResults),
+        addedOIDs: processResultsOIDs(layer.addResults),
+      }))
+    )
+  );
 
   return editsResults;
 };
