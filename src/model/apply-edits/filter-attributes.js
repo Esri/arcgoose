@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import { parseNonEsriTypesWrite } from "../../helpers/parse-non-esri-types";
-import { parseAliasesWrite } from "../../helpers/parse-aliases";
-import { validate, validateWithValidator } from "../../helpers/validate";
-import { getPartialSchema } from "../../helpers/get-partial-schema";
+import { parseNonEsriTypesWrite } from '../../helpers/parse-non-esri-types';
+import { parseAliasesWrite } from '../../helpers/parse-aliases';
+import { validate, validateWithValidator } from '../../helpers/validate';
+import { getPartialSchema } from '../../helpers/get-partial-schema';
 
 export const validateAttributes = (attributes, schema, partialUpdate) => {
   if (!schema) return attributes;
@@ -38,7 +38,7 @@ export const filterAttributes = (attributes, schema, validator) => {
   const validationError = validateWithValidator(
     cleanAttributes,
     validator,
-    schema
+    schema,
   );
 
   if (validationError) {

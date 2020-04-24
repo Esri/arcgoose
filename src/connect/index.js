@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import { getItem } from "@esri/arcgis-rest-portal";
-import request from "../helpers/request-with-retry";
+import { getItem } from '@esri/arcgis-rest-portal';
+import request from '../helpers/request-with-retry';
 
 export default async ({ url, portal, portalItemId, authentication }) => {
   const featureService = url
@@ -30,7 +30,7 @@ export default async ({ url, portal, portalItemId, authentication }) => {
   const featureServiceInfo = {
     ...service,
     authentication,
-    type: "Feature Service",
+    type: 'Feature Service',
     url: featureService.url,
     access: featureService.access,
     owner: featureService.owner,
@@ -39,11 +39,11 @@ export default async ({ url, portal, portalItemId, authentication }) => {
     typeKeywords: featureService.typeKeywords,
     properties: featureService.properties,
     capabilities: {
-      create: service.capabilities.includes("Create"),
-      query: service.capabilities.includes("Query"),
-      update: service.capabilities.includes("Update"),
-      delete: service.capabilities.includes("Delete"),
-      editing: service.capabilities.includes("Editing"),
+      create: service.capabilities.includes('Create'),
+      query: service.capabilities.includes('Query'),
+      update: service.capabilities.includes('Update'),
+      delete: service.capabilities.includes('Delete'),
+      editing: service.capabilities.includes('Editing'),
     },
     layers: {},
     tables: {},
@@ -56,8 +56,8 @@ export default async ({ url, portal, portalItemId, authentication }) => {
         authentication,
         url: `${featureService.url}/${layer.id}`,
         serviceUrl: featureService.url,
-        type: "Feature Layer",
-      })
+        type: 'Feature Layer',
+      }),
   );
   service.tables.forEach(
     (table) =>
@@ -66,8 +66,8 @@ export default async ({ url, portal, portalItemId, authentication }) => {
         authentication,
         url: `${featureService.url}/${table.id}`,
         serviceUrl: featureService.url,
-        type: "Table",
-      })
+        type: 'Table',
+      }),
   );
 
   return featureServiceInfo;

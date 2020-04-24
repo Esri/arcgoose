@@ -13,10 +13,10 @@
  * limitations under the License.
  */
 
-import uuid from "uuid/v4";
-import { ajv } from "../../helpers/validate";
+import uuid from 'uuid/v4';
+import { ajv } from '../../helpers/validate';
 
-import { filterAttributes } from "./filter-attributes";
+import { filterAttributes } from './filter-attributes';
 
 const toArray = (input) => (Array.isArray(input) ? input : [input]);
 

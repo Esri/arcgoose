@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import Ajv from "ajv";
+import Ajv from 'ajv';
 
 export const ajv = new Ajv({
   $data: true,
@@ -21,7 +21,7 @@ export const ajv = new Ajv({
 });
 
 const applyAliasesToPath = (dataPath, schemaPath, schema) => {
-  const schemaPathComponents = schemaPath.split("/");
+  const schemaPathComponents = schemaPath.split('/');
   const field = schemaPathComponents[2];
 
   const alias = schema.properties[field] && schema.properties[field].alias;
@@ -30,7 +30,7 @@ const applyAliasesToPath = (dataPath, schemaPath, schema) => {
     schemaPathComponents.splice(2, 1, alias);
     return {
       dataPath: `.${alias}${dataPath.slice(field.length + 1)}`,
-      schemaPath: schemaPathComponents.join("/"),
+      schemaPath: schemaPathComponents.join('/'),
     };
   }
 
@@ -51,7 +51,7 @@ class ValidationError extends Error {
 
     console.warn({ errors, data, schema }); // eslint-disable-line
 
-    this.name = "ValidationError";
+    this.name = 'ValidationError';
     this.errors = errors.map(({ dataPath, schemaPath, ...remainder }) => ({
       ...remainder,
       ...applyAliasesToPath(dataPath, schemaPath, schema),

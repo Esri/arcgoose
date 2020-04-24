@@ -4,10 +4,10 @@
  */
 module.exports = {
   rules: {
-    "import/no-extraneous-dependencies": 0,
-    "import/extensions": 0,
+    'import/no-extraneous-dependencies': 0,
+    'import/extensions': 0,
   },
   settings: {
-    "import/core-modules": ["esri/request"],
+    'import/core-modules': ['esri/request'],
   },
 };

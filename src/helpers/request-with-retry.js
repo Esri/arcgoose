@@ -12,13 +12,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { request } from "@esri/arcgis-rest-request";
+import { request } from '@esri/arcgis-rest-request';
 
 import {
   REQUEST_MAX_RETRIES,
   REQUEST_RETRY_CODES,
   REQUEST_RETRY_MESSAGES,
-} from "../constants";
+} from '../constants';
 
 const wait = (timeout) =>
   new Promise((resolve) => {
@@ -31,7 +31,7 @@ export const requestWithRetry = async (
   url,
   authentication,
   params,
-  inputTime
+  inputTime,
 ) => {
   const time = inputTime ? inputTime + 1 : 1;
   try {

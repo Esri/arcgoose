@@ -13,20 +13,20 @@
  * limitations under the License.
  */
 
-import Find from "./find";
-import ApplyEdits from "./apply-edits";
+import Find from './find';
+import ApplyEdits from './apply-edits';
 
 const parseValue = (value) =>
-  typeof value === "string" ? `'${value}'` : `${value}`;
+  typeof value === 'string' ? `'${value}'` : `${value}`;
 
 const getQueryFromQueryObject = (queryObject) =>
   Object.keys(queryObject)
     .map((key) => `${key} = ${parseValue(queryObject[key])}`)
-    .join(" AND ");
+    .join(' AND ');
 
 export class FeatureLayer {
   constructor({ url, serviceUrl, id, name, schema, authentication }) {
-    this.type = "table";
+    this.type = 'table';
     this.url = url;
     this.serviceUrl = serviceUrl;
     this.id = id;
@@ -38,7 +38,7 @@ export class FeatureLayer {
   find(queryObject) {
     const query = {
       filters: queryObject ? [getQueryFromQueryObject(queryObject)] : [],
-      outFields: ["*"],
+      outFields: ['*'],
       authentication: this.authentication,
     };
 
@@ -48,7 +48,7 @@ export class FeatureLayer {
   findOne(queryObject) {
     const query = {
       filters: queryObject ? [getQueryFromQueryObject(queryObject)] : [],
-      outFields: ["*"],
+      outFields: ['*'],
       findOne: true,
       authentication: this.authentication,
     };

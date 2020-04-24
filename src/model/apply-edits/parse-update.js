@@ -13,8 +13,8 @@
  * limitations under the License.
  */
 
-import { ajv } from "../../helpers/validate";
-import { filterAttributes } from "./filter-attributes";
+import { ajv } from '../../helpers/validate';
+import { filterAttributes } from './filter-attributes';
 
 const toArray = (input) => (Array.isArray(input) ? input : [input]);
 
