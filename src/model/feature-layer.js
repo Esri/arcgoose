@@ -16,24 +16,16 @@
 import Find from './find';
 import ApplyEdits from './apply-edits';
 
+const parseValue = (value) =>
+  typeof value === 'string' ? `'${value}'` : `${value}`;
 
-const parseValue = value => (typeof (value) === 'string' ? `'${value}'` : `${value}`);
-
-
-const getQueryFromQueryObject = queryObject => Object.keys(queryObject)
-  .map(key => `${key} = ${parseValue(queryObject[key])}`)
-  .join(' AND ');
-
+const getQueryFromQueryObject = (queryObject) =>
+  Object.keys(queryObject)
+    .map((key) => `${key} = ${parseValue(queryObject[key])}`)
+    .join(' AND ');
 
 export class FeatureLayer {
-  constructor({
-    url,
-    serviceUrl,
-    id,
-    name,
-    schema,
-    authentication,
-  }) {
+  constructor({ url, serviceUrl, id, name, schema, authentication }) {
     this.type = 'layer';
     this.url = url;
     this.serviceUrl = serviceUrl;

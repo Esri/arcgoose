@@ -13,14 +13,16 @@
  * limitations under the License.
  */
 
-export const processResults = results => (results ?
+export const processResults = (results) =>
   results
-    .filter(result => result.success)
-    .map(result => result.globalId) :
-  []);
+    ? results
+        .filter((result) => result.success)
+        .map((result) => result.globalId)
+    : [];
 
-export const processResultsOIDs = results => (results ?
+export const processResultsOIDs = (results) =>
   results
-    .filter(result => result.success)
-    .map(result => result.objectId) :
-  []);
+    ? results
+        .filter((result) => result.success)
+        .map((result) => result.objectId)
+    : [];

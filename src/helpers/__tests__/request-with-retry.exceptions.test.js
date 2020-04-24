@@ -4,9 +4,7 @@ import { request } from '@esri/arcgis-rest-request';
 
 import requestWithRetry from '../request-with-retry';
 
-import {
-  REQUEST_RETRY_CODES,
-} from '../../constants';
+import { REQUEST_RETRY_CODES } from '../../constants';
 
 jest.mock('@esri/arcgis-rest-request');
 
@@ -37,12 +35,11 @@ describe('request with retry with exceptions', () => {
   });
 
   it('should not be able to request with other errors', async () => {
-    request
-      .mockImplementationOnce(() => {
-        throw {
-          code: 999,
-        };
-      });
+    request.mockImplementationOnce(() => {
+      throw {
+        code: 999,
+      };
+    });
 
     const url = 'http://foo.com';
     const params = { foo: 'bar' };

@@ -20,13 +20,11 @@ const ajv = new Ajv({
   allErrors: true,
 });
 
-
 const applyAliasesToPath = (dataPath, schemaPath, schema) => {
   const schemaPathComponents = schemaPath.split('/');
   const field = schemaPathComponents[2];
 
   const alias = schema.properties[field] && schema.properties[field].alias;
-
 
   if (alias) {
     schemaPathComponents.splice(2, 1, alias);
@@ -41,7 +39,6 @@ const applyAliasesToPath = (dataPath, schemaPath, schema) => {
     schemaPath,
   };
 };
-
 
 class ValidationError extends Error {
   constructor(errors = [], data = null, schema = null, ...params) {
@@ -64,9 +61,7 @@ class ValidationError extends Error {
   }
 }
 
-
-export const getValidator = schema => ajv.compile(schema);
-
+export const getValidator = (schema) => ajv.compile(schema);
 
 // parse JSON objects and booleans
 export const validate = (attributes, schema) => {
@@ -80,8 +75,9 @@ export const validate = (attributes, schema) => {
 
   ajv.removeSchema(schema);
 
-  return valid ? null : new ValidationError(validator.errors, attributes, schema);
+  return valid
+    ? null
+    : new ValidationError(validator.errors, attributes, schema);
 };
-
 
 export default validate;

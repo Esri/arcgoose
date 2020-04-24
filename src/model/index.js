@@ -16,7 +16,6 @@
 import FeatureLayer from './feature-layer';
 import FeatureTable from './feature-table';
 
-
 export default ({ type, ...otherParams }, schema) => {
   if (type === 'Feature Layer') {
     return new FeatureLayer({ ...otherParams, schema });

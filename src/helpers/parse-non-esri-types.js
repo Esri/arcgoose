@@ -27,28 +27,30 @@ export const parseNonEsriTypesRead = (attributes, schema) => {
 
   const newAttributes = {};
 
-  Object.keys(schema.properties)
-    .forEach(key => {
-      try {
-        if (attributes[key] === undefined) return;
+  Object.keys(schema.properties).forEach((key) => {
+    try {
+      if (attributes[key] === undefined) return;
 
-        const type = schema.properties[key].type;
-        if (type === 'object' || type === 'array' ||
-          type.includes('object') || type.includes('array')) {
-          newAttributes[key] = JSON.parse(attributes[key]);
-        } else if (type === 'boolean') {
-          newAttributes[key] = attributes[key] === 1;
-        } else {
-          newAttributes[key] = attributes[key];
-        }
-      } catch (e) {
-        newAttributes[key] = null;
+      const type = schema.properties[key].type;
+      if (
+        type === 'object' ||
+        type === 'array' ||
+        type.includes('object') ||
+        type.includes('array')
+      ) {
+        newAttributes[key] = JSON.parse(attributes[key]);
+      } else if (type === 'boolean') {
+        newAttributes[key] = attributes[key] === 1;
+      } else {
+        newAttributes[key] = attributes[key];
       }
-    });
+    } catch (e) {
+      newAttributes[key] = null;
+    }
+  });
 
   return newAttributes;
 };
-
 
 // stringify JSON objects and cast booleans to integers
 export const parseNonEsriTypesWrite = (attributes, schema) => {
@@ -56,31 +58,34 @@ export const parseNonEsriTypesWrite = (attributes, schema) => {
 
   const newAttributes = {};
 
-  Object.keys(schema.properties)
-    .forEach(key => {
-      try {
-        const type = schema.properties[key].type;
+  Object.keys(schema.properties).forEach((key) => {
+    try {
+      const type = schema.properties[key].type;
 
-        if (attributes[key] === undefined) {
-          return;
-        }
-
-        if (attributes[key] === null) {
-          newAttributes[key] = null;
-        } else if (!type) {
-          newAttributes[key] = attributes[key];
-        } else if (type === 'object' || type === 'array' ||
-          type.includes('object') || type.includes('array')) {
-          newAttributes[key] = JSON.stringify(attributes[key]);
-        } else if (type === 'boolean') {
-          newAttributes[key] = attributes[key] ? 1 : 0;
-        } else {
-          newAttributes[key] = attributes[key];
-        }
-      } catch (e) {
-        newAttributes[key] = null;
+      if (attributes[key] === undefined) {
+        return;
       }
-    });
+
+      if (attributes[key] === null) {
+        newAttributes[key] = null;
+      } else if (!type) {
+        newAttributes[key] = attributes[key];
+      } else if (
+        type === 'object' ||
+        type === 'array' ||
+        type.includes('object') ||
+        type.includes('array')
+      ) {
+        newAttributes[key] = JSON.stringify(attributes[key]);
+      } else if (type === 'boolean') {
+        newAttributes[key] = attributes[key] ? 1 : 0;
+      } else {
+        newAttributes[key] = attributes[key];
+      }
+    } catch (e) {
+      newAttributes[key] = null;
+    }
+  });
 
   return newAttributes;
 };

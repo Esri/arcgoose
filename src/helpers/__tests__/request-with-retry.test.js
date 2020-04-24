@@ -13,7 +13,9 @@ describe('request with retry', () => {
     const params = { foo: 'bar' };
     const inputTime = 0;
 
-    await expect(requestWithRetry(url, null, params, inputTime)).resolves.toEqual(responseData);
+    await expect(
+      requestWithRetry(url, null, params, inputTime),
+    ).resolves.toEqual(responseData);
 
     expect(request).toHaveBeenCalledWith(url, {
       authentication: null,

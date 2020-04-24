@@ -14,12 +14,14 @@
  * limitations under the License.
  */
 
-import {
-  requestWithRetry,
-} from '../../helpers/request-with-retry';
+import { requestWithRetry } from '../../helpers/request-with-retry';
 
-
-export const fetchPagedFeatures = async (url, authentication, query, inputTime) => {
+export const fetchPagedFeatures = async (
+  url,
+  authentication,
+  query,
+  inputTime,
+) => {
   let exceededTransferLimit = true;
   const features = [];
   let spatialReference = null;
@@ -30,7 +32,12 @@ export const fetchPagedFeatures = async (url, authentication, query, inputTime) 
 
   while (exceededTransferLimit) {
     // eslint-disable-next-line no-await-in-loop
-    const findResult = await requestWithRetry(url, authentication, query, inputTime);
+    const findResult = await requestWithRetry(
+      url,
+      authentication,
+      query,
+      inputTime,
+    );
 
     features.push(...findResult.features);
     spatialReference = findResult.spatialReference;

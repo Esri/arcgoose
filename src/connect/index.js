@@ -17,10 +17,12 @@ import { getItem } from '@esri/arcgis-rest-portal';
 import request from '../helpers/request-with-retry';
 
 export default async ({ url, portal, portalItemId, authentication }) => {
-  const featureService = url ? { url } : await getItem(portalItemId, {
-    portal,
-    authentication,
-  });
+  const featureService = url
+    ? { url }
+    : await getItem(portalItemId, {
+        portal,
+        authentication,
+      });
 
   const service = await request(featureService.url, authentication);
   if (service.error) throw new Error(service.error);
@@ -47,21 +49,26 @@ export default async ({ url, portal, portalItemId, authentication }) => {
     tables: {},
   };
 
-  service.layers.forEach(layer => featureServiceInfo.layers[layer.name] = {
-    ...layer,
-    authentication,
-    url: `${featureService.url}/${layer.id}`,
-    serviceUrl: featureService.url,
-    type: 'Feature Layer',
-  });
-  service.tables.forEach(table => featureServiceInfo.tables[table.name] = {
-    ...table,
-    authentication,
-    url: `${featureService.url}/${table.id}`,
-    serviceUrl: featureService.url,
-    type: 'Table',
-  });
-
+  service.layers.forEach(
+    (layer) =>
+      (featureServiceInfo.layers[layer.name] = {
+        ...layer,
+        authentication,
+        url: `${featureService.url}/${layer.id}`,
+        serviceUrl: featureService.url,
+        type: 'Feature Layer',
+      }),
+  );
+  service.tables.forEach(
+    (table) =>
+      (featureServiceInfo.tables[table.name] = {
+        ...table,
+        authentication,
+        url: `${featureService.url}/${table.id}`,
+        serviceUrl: featureService.url,
+        type: 'Table',
+      }),
+  );
 
   return featureServiceInfo;
 };

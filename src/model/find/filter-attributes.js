@@ -19,7 +19,12 @@ import { parseDefaultValuesRead } from '../../helpers/parse-default-values';
 import { validate } from '../../helpers/validate';
 import { getPartialSchema } from '../../helpers/get-partial-schema';
 
-export const filterAttributes = (attributes, schema, doValidation, outFields) => {
+export const filterAttributes = (
+  attributes,
+  schema,
+  doValidation,
+  outFields,
+) => {
   if (!schema) return attributes;
 
   const cleanAttributes = parseNonEsriTypesRead(attributes, schema);
@@ -41,6 +46,5 @@ export const filterAttributes = (attributes, schema, doValidation, outFields) =>
     ...(doValidation ? { validation: validationError } : null),
   };
 };
-
 
 export default filterAttributes;
