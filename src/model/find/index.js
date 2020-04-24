@@ -18,6 +18,7 @@ import { filterAttributes } from './filter-attributes';
 import { fetchPagedFeatures } from './fetch-paged-features';
 
 import { requestWithRetry } from '../../helpers/request-with-retry';
+import { ajv } from '../../helpers/validate';
 
 const fromAlias = (fieldName, schema) => {
   if (!schema) return fieldName;
@@ -183,25 +184,29 @@ export class Find {
     );
 
     const objectIdField = featureData.objectIdFieldName;
+
+    const { required, ...schema } = this.schema;
+
+    const validator =
+      this.validation && this.schema
+        ? ajv.compile({
+            ...schema,
+            required: this.query.outFields ? [] : required,
+            properties: {
+              [objectIdField]: {
+                type: 'integer',
+                alias: 'esriObjectId',
+              },
+              ...schema.properties,
+            },
+          })
+        : null;
+
     const features = featureData.features.map(
       ({ attributes, geometry, centroid }) => ({
         ...(this.query.outStatistics
           ? { attributes }
-          : filterAttributes(
-              attributes,
-              {
-                ...this.schema,
-                properties: {
-                  [objectIdField]: {
-                    type: 'integer',
-                    alias: 'esriObjectId',
-                  },
-                  ...this.schema.properties,
-                },
-              },
-              this.validation,
-              this.query.outFields,
-            )),
+          : filterAttributes(attributes, this.schema, validator)),
         geometry: this.query.returnGeometry
           ? {
               ...geometry,

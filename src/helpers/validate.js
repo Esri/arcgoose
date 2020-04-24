@@ -1,4 +1,4 @@
-/* Copyright 2019 Esri
+/* Copyright 2020 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 
 import Ajv from 'ajv';
 
-const ajv = new Ajv({
+export const ajv = new Ajv({
   $data: true,
   allErrors: true,
 });
@@ -74,6 +74,14 @@ export const validate = (attributes, schema) => {
   const valid = validator(attributes);
 
   ajv.removeSchema(schema);
+
+  return valid
+    ? null
+    : new ValidationError(validator.errors, attributes, schema);
+};
+
+export const validateWithValidator = (attributes, validator, schema) => {
+  const valid = validator(attributes);
 
   return valid
     ? null
