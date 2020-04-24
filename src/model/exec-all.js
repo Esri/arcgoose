@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-import { requestWithRetry } from "../helpers/request-with-retry";
+import { requestWithRetry } from '../helpers/request-with-retry';
 
 import {
   processResults,
   processResultsOIDs,
-} from "./apply-edits/process-results";
+} from './apply-edits/process-results';
 
 const CHUNK_SIZE = 500;
 
@@ -29,23 +29,23 @@ const flattenEditHandles = (handleArray) => {
     editsArray.push(
       ...(handle.payload.adds || []).map((payload) => ({
         id: handle.payload.id,
-        type: "adds",
+        type: 'adds',
         payload,
-      }))
+      })),
     );
     editsArray.push(
       ...(handle.payload.deletes || []).map((payload) => ({
         id: handle.payload.id,
-        type: "deletes",
+        type: 'deletes',
         payload,
-      }))
+      })),
     );
     editsArray.push(
       ...(handle.payload.updates || []).map((payload) => ({
         id: handle.payload.id,
-        type: "updates",
+        type: 'updates',
         payload,
-      }))
+      })),
     );
   });
 
@@ -61,9 +61,9 @@ const expandEditsSingle = (editsArray, type) => {
 
 const expandEditsId = (id, editsArray) => ({
   id,
-  adds: expandEditsSingle(editsArray, "adds"),
-  deletes: expandEditsSingle(editsArray, "deletes"),
-  updates: expandEditsSingle(editsArray, "updates"),
+  adds: expandEditsSingle(editsArray, 'adds'),
+  deletes: expandEditsSingle(editsArray, 'deletes'),
+  updates: expandEditsSingle(editsArray, 'updates'),
 });
 
 const expandEdits = (editsArray) => {
@@ -73,9 +73,9 @@ const expandEdits = (editsArray) => {
     edits.push(
       expandEditsId(
         id,
-        editsArray.filter((i) => i.id === id)
-      )
-    )
+        editsArray.filter((i) => i.id === id),
+      ),
+    ),
   );
   return edits;
 };
@@ -115,7 +115,7 @@ export default async (handleArray, progressCallback) => {
     const result = await requestWithRetry(
       `${serviceUrl}/applyEdits`,
       authentication,
-      query
+      query,
     );
 
     editsResultsArray.push(result);
@@ -138,8 +138,8 @@ export default async (handleArray, progressCallback) => {
         updatedFeatures: processResults(layer.updateResults),
         deletedFeatures: processResults(layer.deleteResults),
         addedOIDs: processResultsOIDs(layer.addResults),
-      }))
-    )
+      })),
+    ),
   );
 
   return editsResults;

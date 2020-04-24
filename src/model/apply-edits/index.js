@@ -13,20 +13,20 @@
  * limitations under the License.
  */
 
-import parseCreate from "./parse-create";
-import parseUpdate from "./parse-update";
-import parseDelete from "./parse-delete";
+import parseCreate from './parse-create';
+import parseUpdate from './parse-update';
+import parseDelete from './parse-delete';
 
-import { processResults, processResultsOIDs } from "./process-results";
+import { processResults, processResultsOIDs } from './process-results';
 
-import { requestWithRetry } from "../../helpers/request-with-retry";
+import { requestWithRetry } from '../../helpers/request-with-retry';
 
 export class ApplyEdits {
   static async deleteWhere(featureLayer, where, authentication) {
     const editsResult = await requestWithRetry(
       `${featureLayer.url}/deleteFeatures`,
       authentication,
-      { where, rollbackOnFailure: true }
+      { where, rollbackOnFailure: true },
     );
 
     return {
@@ -88,9 +88,9 @@ export class ApplyEdits {
     let deleteIds = null;
     if (this.deletes.length) {
       if (this.shouldUseGlobalIds) {
-        deleteIds = this.deletes.map((id) => `"${id}"`).join(",");
+        deleteIds = this.deletes.map((id) => `"${id}"`).join(',');
       } else {
-        deleteIds = this.deletes.map((id) => `${id}`).join(",");
+        deleteIds = this.deletes.map((id) => `${id}`).join(',');
       }
     }
 
@@ -106,7 +106,7 @@ export class ApplyEdits {
     const editsResult = await requestWithRetry(
       `${this.featureLayer.url}/applyEdits`,
       this.authentication,
-      query
+      query,
     );
 
     /* TODO: handle missing data field */

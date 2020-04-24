@@ -13,17 +13,17 @@
  * limitations under the License.
  */
 
-import { parseNonEsriTypesRead } from "../../helpers/parse-non-esri-types";
-import { parseAliasesRead } from "../../helpers/parse-aliases";
-import { parseDefaultValuesRead } from "../../helpers/parse-default-values";
-import { validate } from "../../helpers/validate";
-import { getPartialSchema } from "../../helpers/get-partial-schema";
+import { parseNonEsriTypesRead } from '../../helpers/parse-non-esri-types';
+import { parseAliasesRead } from '../../helpers/parse-aliases';
+import { parseDefaultValuesRead } from '../../helpers/parse-default-values';
+import { validate } from '../../helpers/validate';
+import { getPartialSchema } from '../../helpers/get-partial-schema';
 
 export const filterAttributes = (
   attributes,
   schema,
   doValidation,
-  outFields
+  outFields,
 ) => {
   if (!schema) return attributes;
 
@@ -38,7 +38,7 @@ export const filterAttributes = (
 
   const parsedAttributes = parseAliasesRead(
     parseDefaultValuesRead(cleanAttributes, schema),
-    schema
+    schema,
   );
 
   return {

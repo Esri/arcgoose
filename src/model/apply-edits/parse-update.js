@@ -13,7 +13,7 @@
  * limitations under the License.
  */
 
-import { filterAttributes } from "./filter-attributes";
+import { filterAttributes } from './filter-attributes';
 
 const toArray = (input) => (Array.isArray(input) ? input : [input]);
 

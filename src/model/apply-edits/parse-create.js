@@ -13,9 +13,9 @@
  * limitations under the License.
  */
 
-import uuid from "uuid/v4";
+import uuid from 'uuid/v4';
 
-import { filterAttributes } from "./filter-attributes";
+import { filterAttributes } from './filter-attributes';
 
 const toArray = (input) => (Array.isArray(input) ? input : [input]);
 

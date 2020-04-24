@@ -14,13 +14,13 @@
  * limitations under the License.
  */
 
-import { requestWithRetry } from "../../helpers/request-with-retry";
+import { requestWithRetry } from '../../helpers/request-with-retry';
 
 export const fetchPagedFeatures = async (
   url,
   authentication,
   query,
-  inputTime
+  inputTime,
 ) => {
   let exceededTransferLimit = true;
   const features = [];
@@ -36,7 +36,7 @@ export const fetchPagedFeatures = async (
       url,
       authentication,
       query,
-      inputTime
+      inputTime,
     );
 
     features.push(...findResult.features);

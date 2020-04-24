@@ -13,18 +13,18 @@
  * limitations under the License.
  */
 
-import { filterAttributes } from "./filter-attributes";
+import { filterAttributes } from './filter-attributes';
 
-import { fetchPagedFeatures } from "./fetch-paged-features";
+import { fetchPagedFeatures } from './fetch-paged-features';
 
-import { requestWithRetry } from "../../helpers/request-with-retry";
+import { requestWithRetry } from '../../helpers/request-with-retry';
 
 const fromAlias = (fieldName, schema) => {
   if (!schema) return fieldName;
 
   const originalKey = Object.keys(schema.properties).find(
     (key) =>
-      schema.properties[key] && schema.properties[key].alias === fieldName
+      schema.properties[key] && schema.properties[key].alias === fieldName,
   );
 
   return originalKey || fieldName;
@@ -57,7 +57,7 @@ export class Find {
 
   populate(outFields) {
     this.query.outFields = outFields.map((field) =>
-      fromAlias(field, this.schema)
+      fromAlias(field, this.schema),
     );
     return this;
   }
@@ -70,12 +70,12 @@ export class Find {
   }
 
   intersects() {
-    this.query.spatialRel = "esriSpatialRelIntersects";
+    this.query.spatialRel = 'esriSpatialRelIntersects';
     return this;
   }
 
   contains() {
-    this.query.spatialRel = "esriSpatialRelContains";
+    this.query.spatialRel = 'esriSpatialRelContains';
     return this;
   }
 
@@ -100,15 +100,15 @@ export class Find {
   }
 
   sort(sortOrder) {
-    if (sortOrder && typeof sortOrder === "object") {
+    if (sortOrder && typeof sortOrder === 'object') {
       this.query.orderByFields = Object.keys(sortOrder)
         .map(
           (field) =>
             `${fromAlias(field, this.schema)} ${
-              sortOrder[field] < 0 ? "DESC" : "ASC"
-            }`
+              sortOrder[field] < 0 ? 'DESC' : 'ASC'
+            }`,
         )
-        .join(", ");
+        .join(', ');
     } // TODO: array and string syntax https://mongoosejs.com/docs/queries.html
     return this;
   }
@@ -146,11 +146,11 @@ export class Find {
   async exec() {
     const query = {
       where:
-        this.query.filters.map((filter) => `(${filter})`).join(" AND ") ||
-        "1=1",
+        this.query.filters.map((filter) => `(${filter})`).join(' AND ') ||
+        '1=1',
       geometry: JSON.stringify(this.query.geometry),
       geometryType: this.query.geometryType,
-      outFields: this.query.outFields.join(","),
+      outFields: this.query.outFields.join(','),
       returnGeometry: this.query.returnGeometry,
       returnZ: this.query.returnZ,
       returnCentroid: this.query.returnCentroid,
@@ -171,7 +171,7 @@ export class Find {
       const count = await requestWithRetry(
         queryUrl,
         this.query.authentication,
-        query
+        query,
       );
       return count;
     }
@@ -179,7 +179,7 @@ export class Find {
     const featureData = await fetchPagedFeatures(
       queryUrl,
       this.query.authentication,
-      query
+      query,
     );
 
     const objectIdField = featureData.objectIdFieldName;
@@ -193,14 +193,14 @@ export class Find {
                 ...this.schema,
                 properties: {
                   [objectIdField]: {
-                    type: "integer",
-                    alias: "esriObjectId",
+                    type: 'integer',
+                    alias: 'esriObjectId',
                   },
                   ...this.schema.properties,
                 },
               },
               this.validation,
-              this.query.outFields
+              this.query.outFields,
             )),
         geometry: this.query.returnGeometry
           ? {
@@ -216,12 +216,12 @@ export class Find {
               spatialReference: featureData.spatialReference,
             }
           : null,
-      })
+      }),
     );
 
     if (this.findOne) {
       if (features.length !== 1) {
-        throw new Error("Not sure what to throw!");
+        throw new Error('Not sure what to throw!');
       }
 
       return features[0];

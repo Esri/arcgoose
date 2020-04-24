@@ -33,13 +33,13 @@ export const parseNonEsriTypesRead = (attributes, schema) => {
 
       const type = schema.properties[key].type;
       if (
-        type === "object" ||
-        type === "array" ||
-        type.includes("object") ||
-        type.includes("array")
+        type === 'object' ||
+        type === 'array' ||
+        type.includes('object') ||
+        type.includes('array')
       ) {
         newAttributes[key] = JSON.parse(attributes[key]);
-      } else if (type === "boolean") {
+      } else if (type === 'boolean') {
         newAttributes[key] = attributes[key] === 1;
       } else {
         newAttributes[key] = attributes[key];
@@ -71,13 +71,13 @@ export const parseNonEsriTypesWrite = (attributes, schema) => {
       } else if (!type) {
         newAttributes[key] = attributes[key];
       } else if (
-        type === "object" ||
-        type === "array" ||
-        type.includes("object") ||
-        type.includes("array")
+        type === 'object' ||
+        type === 'array' ||
+        type.includes('object') ||
+        type.includes('array')
       ) {
         newAttributes[key] = JSON.stringify(attributes[key]);
-      } else if (type === "boolean") {
+      } else if (type === 'boolean') {
         newAttributes[key] = attributes[key] ? 1 : 0;
       } else {
         newAttributes[key] = attributes[key];
