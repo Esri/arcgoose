@@ -29,7 +29,7 @@ export const validateAttributes = (attributes, schema, partialUpdate) => {
 
   const { required, ...partialSchema } = schema;
   const validationSchema = partialUpdate ? partialSchema : schema;
-  const validator = ajv.addSchema(validationSchema).compile(validationSchema);
+  const validator = ajv.compile(validationSchema);
 
   const cleanAttributes = parseAliasesWrite(attributes, schema);
 
