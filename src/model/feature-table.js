@@ -40,9 +40,9 @@ export class FeatureLayer {
       allErrors: true,
     });
 
-    const { required, ...partialSchema } = schema;
-    this.ajv.addSchema(schema, 'schema').compile(schema);
-    this.ajv.addSchema(partialSchema, 'partialSchema').compile(partialSchema);
+    const { required, $id, ...partialSchema } = schema;
+    this.ajv.compile({ $id: 'schema', ...schema });
+    this.ajv.compile({ $id: 'partialSchema', partialSchema });
   }
 
   find(queryObject) {
