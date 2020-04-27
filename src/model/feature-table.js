@@ -1,4 +1,4 @@
-/* Copyright 2018 Esri
+/* Copyright 2020 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,6 +13,7 @@
  * limitations under the License.
  */
 
+import Ajv from 'ajv';
 import Find from './find';
 import ApplyEdits from './apply-edits';
 
@@ -33,6 +34,15 @@ export class FeatureLayer {
     this.name = name;
     this.schema = schema;
     this.authentication = authentication;
+
+    this.ajv = new Ajv({
+      $data: true,
+      allErrors: true,
+    });
+
+    const { required, ...partialSchema } = schema;
+    this.ajv.addSchema(schema, 'schema').compile(schema);
+    this.ajv.addSchema(partialSchema, 'partialSchema').compile(partialSchema);
   }
 
   find(queryObject) {
@@ -42,7 +52,7 @@ export class FeatureLayer {
       authentication: this.authentication,
     };
 
-    return new Find(this, query, this.schema);
+    return new Find(this, query, { schema: this.schema, ajv: this.ajv });
   }
 
   findOne(queryObject) {
@@ -53,11 +63,15 @@ export class FeatureLayer {
       authentication: this.authentication,
     };
 
-    return new Find(this, query, this.schema);
+    return new Find(this, query, { schema: this.schema, ajv: this.ajv });
   }
 
   applyEdits() {
-    return new ApplyEdits(this, this.schema, this.authentication);
+    return new ApplyEdits(
+      this,
+      { schema: this.schema, ajv: this.ajv },
+      this.authentication,
+    );
   }
 
   deleteWhere(where) {

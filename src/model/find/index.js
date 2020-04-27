@@ -1,4 +1,4 @@
-/* Copyright 2018 Esri
+/* Copyright 2020 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,11 +14,8 @@
  */
 
 import { filterAttributes } from './filter-attributes';
-
 import { fetchPagedFeatures } from './fetch-paged-features';
-
 import { requestWithRetry } from '../../helpers/request-with-retry';
-import { ajv } from '../../helpers/validate';
 
 const fromAlias = (fieldName, schema) => {
   if (!schema) return fieldName;
@@ -32,7 +29,7 @@ const fromAlias = (fieldName, schema) => {
 };
 
 export class Find {
-  constructor(featureLayer, { findOne, ...query }, schema) {
+  constructor(featureLayer, { findOne, ...query }, { schema, ajv }) {
     this.featureLayer = featureLayer;
     this.query = {
       ...query,
@@ -43,6 +40,7 @@ export class Find {
     };
     this.findOne = !!findOne;
     this.schema = schema;
+    this.ajv = ajv;
     this.validation = false;
   }
 
@@ -183,24 +181,31 @@ export class Find {
       query,
     );
 
-    const objectIdField = featureData.objectIdFieldName;
+    // const objectIdField = featureData.objectIdFieldName;
 
-    const { required, ...schema } = this.schema;
+    // const { required, ...schema } = this.schema;
 
-    const validator =
-      this.validation && this.schema
-        ? ajv.compile({
-            ...schema,
-            required: this.query.outFields ? [] : required,
-            properties: {
-              [objectIdField]: {
-                type: 'integer',
-                alias: 'esriObjectId',
-              },
-              ...schema.properties,
-            },
-          })
-        : null;
+    let validator = null;
+    if (this.validation) {
+      validator = this.ajv.getSchema(
+        this.query.outFields ? 'partialSchema' : 'schema',
+      );
+    }
+
+    // const validator =
+    //   this.validation && this.schema
+    //     ? ajv.compile({
+    //         ...schema,
+    //         required: this.query.outFields ? [] : required,
+    //         properties: {
+    //           [objectIdField]: {
+    //             type: 'integer',
+    //             alias: 'esriObjectId',
+    //           },
+    //           ...schema.properties,
+    //         },
+    //       })
+    //     : null;
 
     const features = featureData.features.map(
       ({ attributes, geometry, centroid }) => ({

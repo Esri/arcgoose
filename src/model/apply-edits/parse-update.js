@@ -13,19 +13,13 @@
  * limitations under the License.
  */
 
-import { ajv } from '../../helpers/validate';
 import { filterAttributes } from './filter-attributes';
 
 const toArray = (input) => (Array.isArray(input) ? input : [input]);
 
 // takes array of features
-export const parseUpdate = (input, schema) => {
-  let validator = null;
-
-  if (schema) {
-    const { required, ...partialSchema } = schema;
-    validator = ajv.compile(partialSchema);
-  }
+export const parseUpdate = (input, { schema, ajv }) => {
+  const validator = schema ? ajv.getSchema('partialSchema') : null;
 
   return toArray(input).map((object) => {
     const { geometry, attributes } = object;

@@ -14,15 +14,14 @@
  */
 
 import uuid from 'uuid/v4';
-import { ajv } from '../../helpers/validate';
 
 import { filterAttributes } from './filter-attributes';
 
 const toArray = (input) => (Array.isArray(input) ? input : [input]);
 
 // takes array of features
-export const parseCreate = (input, schema) => {
-  const validator = schema ? ajv.compile(schema) : null;
+export const parseCreate = (input, { schema, ajv }) => {
+  const validator = schema ? ajv.getSchema('schema') : null;
 
   return toArray(input).map((object) => {
     const { geometry, attributes } = object;

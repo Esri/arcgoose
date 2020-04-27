@@ -13,12 +13,12 @@
  * limitations under the License.
  */
 
-import Ajv from 'ajv';
-
-export const ajv = new Ajv({
-  $data: true,
-  allErrors: true,
-});
+// import Ajv from 'ajv';
+//
+// export const ajv = new Ajv({
+//   $data: true,
+//   allErrors: true,
+// });
 
 const applyAliasesToPath = (dataPath, schemaPath, schema) => {
   const schemaPathComponents = schemaPath.split('/');
@@ -61,24 +61,19 @@ class ValidationError extends Error {
   }
 }
 
-export const getValidator = (schema) => ajv.compile(schema);
+// export const getValidator = (schema) => ajv.compile(schema);
 
 // parse JSON objects and booleans
-export const validate = (attributes, schema) => {
-  if (!schema) return null;
-
-  ajv.addSchema(schema);
-
-  const validator = getValidator(schema);
-
-  const valid = validator(attributes);
-
-  ajv.removeSchema(schema);
-
-  return valid
-    ? null
-    : new ValidationError(validator.errors, attributes, schema);
-};
+// export const validate = (attributes, schema) => {
+//   if (!schema) return null;
+//
+//   const validator = getValidator(schema);
+//   const valid = validator(attributes);
+//
+//   return valid
+//     ? null
+//     : new ValidationError(validator.errors, attributes, schema);
+// };
 
 export const validateWithValidator = (attributes, validator, schema) => {
   const valid = validator(attributes);
@@ -88,4 +83,4 @@ export const validateWithValidator = (attributes, validator, schema) => {
     : new ValidationError(validator.errors, attributes, schema);
 };
 
-export default validate;
+export default validateWithValidator;
