@@ -31,6 +31,7 @@ export const filterAttributes = (
 
   let validationError;
 
+  console.log(validator);
   if (validator) {
     validationError = validateWithValidator(cleanAttributes, validator, schema);
   }

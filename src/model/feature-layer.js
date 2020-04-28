@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-import Ajv from 'ajv';
 import Find from './find';
 import ApplyEdits from './apply-edits';
 

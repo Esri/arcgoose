@@ -19,14 +19,22 @@ import FeatureLayer from './feature-layer';
 import FeatureTable from './feature-table';
 
 export default ({ type, ...otherParams }, schema) => {
-  this.ajv = new Ajv({
+  const ajv = new Ajv({
     $data: true,
     allErrors: true,
   });
 
-  const { required, $id, if, then, else, ...partialSchema } = schema;
-  this.ajv.compile({ $id: 'schema', ...schema });
-  this.ajv.compile({ $id: 'partialSchema', partialSchema });
+  const {
+    required,
+    $id,
+    ['if']: no1, // eslint-disable-line no-useless-computed-key
+    ['then']: no2, // eslint-disable-line no-useless-computed-key
+    ['else']: no3, // eslint-disable-line no-useless-computed-key
+    ...partialSchema
+  } = schema;
+
+  ajv.compile({ $id: 'schema', ...schema });
+  ajv.compile({ $id: 'partialSchema', partialSchema });
 
   if (type === 'Feature Layer') {
     return new FeatureLayer({ ...otherParams, schema, ajv });
