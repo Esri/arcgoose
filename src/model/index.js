@@ -33,8 +33,8 @@ export default ({ type, ...otherParams }, schema) => {
     ...partialSchema
   } = schema;
 
-  ajv.addSchema({ $id: 'schema', ...schema }, 'schema');
-  ajv.addSchema({ $id: 'partialSchema', partialSchema }, 'partialSchema');
+  ajv.addSchema(schema, 'schema');
+  ajv.addSchema(partialSchema, 'partialSchema');
 
   if (type === 'Feature Layer') {
     return new FeatureLayer({ ...otherParams, schema, ajv });
