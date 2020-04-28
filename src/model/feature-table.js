@@ -13,7 +13,6 @@
  * limitations under the License.
  */
 
-import Ajv from 'ajv';
 import Find from './find';
 import ApplyEdits from './apply-edits';
 
@@ -26,23 +25,15 @@ const getQueryFromQueryObject = (queryObject) =>
     .join(' AND ');
 
 export class FeatureLayer {
-  constructor({ url, serviceUrl, id, name, schema, authentication }) {
+  constructor({ url, serviceUrl, id, name, schema, ajv, authentication }) {
     this.type = 'table';
     this.url = url;
     this.serviceUrl = serviceUrl;
     this.id = id;
     this.name = name;
     this.schema = schema;
+    this.ajv = ajv;
     this.authentication = authentication;
-
-    this.ajv = new Ajv({
-      $data: true,
-      allErrors: true,
-    });
-
-    const { required, $id, ...partialSchema } = schema;
-    this.ajv.compile({ $id: 'schema', ...schema });
-    this.ajv.compile({ $id: 'partialSchema', partialSchema });
   }
 
   find(queryObject) {
