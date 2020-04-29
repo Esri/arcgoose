@@ -18,10 +18,16 @@ import { parseAliasesRead } from '../../helpers/parse-aliases';
 import { parseDefaultValuesRead } from '../../helpers/parse-default-values';
 import { validateWithValidator } from '../../helpers/validate';
 
-export const filterAttributes = (attributes, schema, validator) => {
+export const filterAttributes = (
+  attributes,
+  schema,
+  validator,
+  esriObjectIdField,
+) => {
   if (!schema) return attributes;
 
   const cleanAttributes = parseNonEsriTypesRead(attributes, schema);
+  const esriObjectId = attributes[esriObjectIdField];
 
   let validationError;
 
@@ -35,7 +41,10 @@ export const filterAttributes = (attributes, schema, validator) => {
   );
 
   return {
-    attributes: parsedAttributes,
+    attributes: {
+      ...parsedAttributes,
+      esriObjectId,
+    },
     ...(validator ? { validation: validationError } : null),
   };
 };

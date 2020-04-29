@@ -1,4 +1,4 @@
-/* Copyright 2018 Esri
+/* Copyright 2020 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -25,13 +25,14 @@ const getQueryFromQueryObject = (queryObject) =>
     .join(' AND ');
 
 export class FeatureLayer {
-  constructor({ url, serviceUrl, id, name, schema, authentication }) {
+  constructor({ url, serviceUrl, id, name, schema, ajv, authentication }) {
     this.type = 'layer';
     this.url = url;
     this.serviceUrl = serviceUrl;
     this.id = id;
     this.name = name;
     this.schema = schema;
+    this.ajv = ajv;
     this.authentication = authentication;
   }
 
@@ -42,7 +43,7 @@ export class FeatureLayer {
       authentication: this.authentication,
     };
 
-    return new Find(this, query, this.schema);
+    return new Find(this, query, { schema: this.schema, ajv: this.ajv });
   }
 
   findOne(queryObject) {
@@ -53,11 +54,15 @@ export class FeatureLayer {
       authentication: this.authentication,
     };
 
-    return new Find(this, query, this.schema);
+    return new Find(this, query, { schema: this.schema, ajv: this.ajv });
   }
 
   applyEdits() {
-    return new ApplyEdits(this, this.schema, this.authentication);
+    return new ApplyEdits(
+      this,
+      { schema: this.schema, ajv: this.ajv },
+      this.authentication,
+    );
   }
 
   deleteWhere(where) {

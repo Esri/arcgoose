@@ -1,4 +1,4 @@
-/* Copyright 2018 Esri
+/* Copyright 2020 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,9 +35,10 @@ export class ApplyEdits {
     };
   }
 
-  constructor(featureLayer, schema, authentication) {
+  constructor(featureLayer, { schema, ajv }, authentication) {
     this.featureLayer = featureLayer;
     this.schema = schema;
+    this.ajv = ajv;
     this.adds = [];
     this.deletes = [];
     this.updates = [];
@@ -46,12 +47,16 @@ export class ApplyEdits {
   }
 
   add(features) {
-    this.adds.push(...parseCreate(features, this.schema));
+    this.adds.push(
+      ...parseCreate(features, { schema: this.schema, ajv: this.ajv }),
+    );
     return this;
   }
 
   update(features) {
-    this.updates.push(...parseUpdate(features, this.schema));
+    this.updates.push(
+      ...parseUpdate(features, { schema: this.schema, ajv: this.ajv }),
+    );
     return this;
   }
 

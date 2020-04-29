@@ -1,4 +1,4 @@
-/* Copyright 2018 Esri
+/* Copyright 2020 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,16 +13,35 @@
  * limitations under the License.
  */
 
+import Ajv from 'ajv';
+
 import FeatureLayer from './feature-layer';
 import FeatureTable from './feature-table';
 
 export default ({ type, ...otherParams }, schema) => {
+  const ajv = new Ajv({
+    $data: true,
+    allErrors: true,
+  });
+
+  const {
+    required,
+    $id,
+    ['if']: no1, // eslint-disable-line no-useless-computed-key
+    ['then']: no2, // eslint-disable-line no-useless-computed-key
+    ['else']: no3, // eslint-disable-line no-useless-computed-key
+    ...partialSchema
+  } = schema;
+
+  ajv.addSchema(schema, 'schema');
+  ajv.addSchema(partialSchema, 'partialSchema');
+
   if (type === 'Feature Layer') {
-    return new FeatureLayer({ ...otherParams, schema });
+    return new FeatureLayer({ ...otherParams, schema, ajv });
   }
 
   if (type === 'Table') {
-    return new FeatureTable({ ...otherParams, schema });
+    return new FeatureTable({ ...otherParams, schema, ajv });
   }
 
   return null;

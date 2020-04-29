@@ -13,21 +13,27 @@
  * limitations under the License.
  */
 
+import Ajv from 'ajv';
 import { parseNonEsriTypesWrite } from '../../helpers/parse-non-esri-types';
 import { parseAliasesWrite } from '../../helpers/parse-aliases';
-import { validate, validateWithValidator } from '../../helpers/validate';
-import { getPartialSchema } from '../../helpers/get-partial-schema';
+import { validateWithValidator } from '../../helpers/validate';
 
+// Legacy
 export const validateAttributes = (attributes, schema, partialUpdate) => {
   if (!schema) return attributes;
 
+  const ajv = new Ajv({
+    $data: true,
+    allErrors: true,
+  });
+
+  const { required, ...partialSchema } = schema;
+  const validationSchema = partialUpdate ? partialSchema : schema;
+  const validator = ajv.compile(validationSchema);
+
   const cleanAttributes = parseAliasesWrite(attributes, schema);
 
-  const validationSchema = partialUpdate
-    ? getPartialSchema(schema, Object.keys(cleanAttributes))
-    : schema;
-
-  return validate(cleanAttributes, validationSchema);
+  return validateWithValidator(cleanAttributes, validator, validationSchema);
 };
 
 export const filterAttributes = (attributes, schema, validator) => {
