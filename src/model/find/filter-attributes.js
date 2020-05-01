@@ -23,12 +23,15 @@ export const filterAttributes = (
   schema,
   validator,
   esriObjectIdField,
+  esriShapeAreaField,
 ) => {
   if (!schema) return attributes;
 
   const cleanAttributes = parseNonEsriTypesRead(attributes, schema);
   const esriObjectId = attributes[esriObjectIdField];
-
+  const esriShapeArea = esriShapeAreaField
+    ? attributes[esriShapeAreaField]
+    : undefined;
   let validationError;
 
   if (validator) {
@@ -44,6 +47,7 @@ export const filterAttributes = (
     attributes: {
       ...parsedAttributes,
       esriObjectId,
+      esriShapeArea,
     },
     ...(validator ? { validation: validationError } : null),
   };

@@ -182,6 +182,9 @@ export class Find {
     );
 
     const esriObjectIdField = featureData.objectIdFieldName;
+    const esriShapeAreaField =
+      featureData.geometryProperties &&
+      featureData.geometryProperties.shapeAreaFieldName;
 
     let validator = null;
     if (this.validation) {
@@ -199,6 +202,7 @@ export class Find {
               this.schema,
               validator,
               esriObjectIdField,
+              esriShapeAreaField,
             )),
         geometry: this.query.returnGeometry
           ? {
