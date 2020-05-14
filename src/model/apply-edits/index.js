@@ -43,6 +43,7 @@ export class ApplyEdits {
     this.deletes = [];
     this.updates = [];
     this.shouldUseGlobalIds = true;
+    this.shouldRollbackOnFailure = true;
     this.authentication = authentication;
   }
 
@@ -75,6 +76,11 @@ export class ApplyEdits {
     return this;
   }
 
+  rollbackOnFailure(setting) {
+    this.shouldRollbackOnFailure = setting;
+    return this;
+  }
+
   handle() {
     return {
       serviceUrl: this.featureLayer.serviceUrl,
@@ -102,7 +108,7 @@ export class ApplyEdits {
     const query = {
       authentication: this.authentication,
       useGlobalIds: this.shouldUseGlobalIds,
-      rollbackOnFailure: true,
+      rollbackOnFailure: this.shouldRollbackOnFailure,
       adds: this.adds.length ? JSON.stringify(this.adds) : null,
       updates: this.updates.length ? JSON.stringify(this.updates) : null,
       deletes: deleteIds,
