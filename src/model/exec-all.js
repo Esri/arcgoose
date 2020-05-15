@@ -97,6 +97,7 @@ export default async (handleArray, progressCallback) => {
 
   const serviceUrl = handleArray[0].serviceUrl;
   const authentication = handleArray[0].authentication;
+  const rollbackOnFailure = handleArray[0].rollbackOnFailure;
 
   const editsArray = flattenEditHandles(handleArray);
   const editChunks = getChunks(editsArray);
@@ -107,7 +108,7 @@ export default async (handleArray, progressCallback) => {
     const edits = expandEdits(editChunks[i]);
     const query = {
       useGlobalIds: true,
-      rollbackOnFailure: true,
+      rollbackOnFailure,
       edits: JSON.stringify(edits),
     };
 
