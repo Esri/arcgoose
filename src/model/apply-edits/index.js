@@ -76,7 +76,7 @@ export class ApplyEdits {
     return this;
   }
 
-  rollbackOnFailure(setting) {
+  rollbackOnFailure() {
     this.shouldRollbackOnFailure = true;
     return this;
   }
