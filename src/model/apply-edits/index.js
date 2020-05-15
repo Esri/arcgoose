@@ -86,7 +86,7 @@ export class ApplyEdits {
       serviceUrl: this.featureLayer.serviceUrl,
       name: this.featureLayer.name,
       authentication: this.authentication,
-      rollbackOnFailure: shouldRollbackOnFailure,
+      rollbackOnFailure: this.shouldRollbackOnFailure,
       payload: {
         id: this.featureLayer.id,
         adds: this.adds.length ? this.adds : null,
