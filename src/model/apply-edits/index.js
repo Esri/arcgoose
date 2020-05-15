@@ -43,7 +43,7 @@ export class ApplyEdits {
     this.deletes = [];
     this.updates = [];
     this.shouldUseGlobalIds = true;
-    this.shouldRollbackOnFailure = true;
+    this.shouldRollbackOnFailure = false;
     this.authentication = authentication;
   }
 
