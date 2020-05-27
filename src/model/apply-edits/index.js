@@ -48,21 +48,32 @@ export class ApplyEdits {
   }
 
   add(features) {
-    this.adds.push(
-      ...parseCreate(features, { schema: this.schema, ajv: this.ajv }),
+    parseCreate(features, { schema: this.schema, ajv: this.ajv }).forEach(
+      (feature) => {
+        this.adds.push(feature);
+      },
+      this,
     );
+
     return this;
   }
 
   update(features) {
-    this.updates.push(
-      ...parseUpdate(features, { schema: this.schema, ajv: this.ajv }),
+    parseUpdate(features, { schema: this.schema, ajv: this.ajv }).forEach(
+      (feature) => {
+        this.updates.push(feature);
+      },
+      this,
     );
+
     return this;
   }
 
   delete(idArray) {
-    this.deletes.push(...parseDelete(idArray));
+    parseDelete(idArray).forEach((feature) => {
+      this.deletes.push(feature);
+    }, this);
+
     return this;
   }
 
