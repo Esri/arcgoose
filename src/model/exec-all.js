@@ -26,27 +26,29 @@ const flattenEditHandles = (handleArray) => {
   const editsArray = [];
 
   handleArray.forEach((handle) => {
-    editsArray.push(
-      ...(handle.payload.adds || []).map((payload) => ({
+    (handle.payload.adds || []).forEach((payload) => {
+      editsArray.push({
         id: handle.payload.id,
         type: 'adds',
         payload,
-      })),
-    );
-    editsArray.push(
-      ...(handle.payload.deletes || []).map((payload) => ({
+      });
+    });
+
+    (handle.payload.deletes || []).forEach((payload) => {
+      editsArray.push({
         id: handle.payload.id,
         type: 'deletes',
         payload,
-      })),
-    );
-    editsArray.push(
-      ...(handle.payload.updates || []).map((payload) => ({
+      });
+    });
+
+    (handle.payload.updates || []).forEach((payload) => {
+      editsArray.push({
         id: handle.payload.id,
         type: 'updates',
         payload,
-      })),
-    );
+      });
+    });
   });
 
   return editsArray;
