@@ -1,4 +1,4 @@
-/* Copyright 2019 Esri
+/* Copyright 2021 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,8 +14,6 @@
  */
 
 import { parseNonEsriTypesRead } from '../../helpers/parse-non-esri-types';
-import { parseAliasesRead } from '../../helpers/parse-aliases';
-import { parseDefaultValuesRead } from '../../helpers/parse-default-values';
 import { validateWithValidator } from '../../helpers/validate';
 
 export const filterAttributes = (
@@ -35,14 +33,9 @@ export const filterAttributes = (
     validationError = validateWithValidator(cleanAttributes, validator, schema);
   }
 
-  const parsedAttributes = parseAliasesRead(
-    parseDefaultValuesRead(cleanAttributes, schema),
-    schema,
-  );
-
   return {
     attributes: {
-      ...parsedAttributes,
+      ...cleanAttributes,
       esriObjectId,
     },
     ...(validator ? { validation: validationError } : null),

@@ -17,17 +17,6 @@ import { filterAttributes } from './filter-attributes';
 import { fetchPagedFeatures } from './fetch-paged-features';
 import { requestWithRetry } from '../../helpers/request-with-retry';
 
-const fromAlias = (fieldName, schema) => {
-  if (!schema) return fieldName;
-
-  const originalKey = Object.keys(schema.properties).find(
-    (key) =>
-      schema.properties[key] && schema.properties[key].alias === fieldName,
-  );
-
-  return originalKey || fieldName;
-};
-
 export class Find {
   constructor(featureLayer, { findOne, ...query }, { schema, ajv }) {
     this.featureLayer = featureLayer;
@@ -55,9 +44,7 @@ export class Find {
   }
 
   populate(outFields) {
-    this.query.outFields = outFields.map((field) =>
-      fromAlias(field, this.schema),
-    );
+    this.query.outFields = outFields;
     return this;
   }
 
@@ -101,12 +88,7 @@ export class Find {
   sort(sortOrder) {
     if (sortOrder && typeof sortOrder === 'object') {
       this.query.orderByFields = Object.keys(sortOrder)
-        .map(
-          (field) =>
-            `${fromAlias(field, this.schema)} ${
-              sortOrder[field] < 0 ? 'DESC' : 'ASC'
-            }`,
-        )
+        .map((field) => `${field} ${sortOrder[field] < 0 ? 'DESC' : 'ASC'}`)
         .join(', ');
     } // TODO: array and string syntax https://mongoosejs.com/docs/queries.html
     return this;
