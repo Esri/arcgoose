@@ -1,4 +1,4 @@
-/* Copyright 2020 Esri
+/* Copyright 2021 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,7 +15,6 @@
 
 import Ajv from 'ajv';
 import { parseNonEsriTypesWrite } from '../../helpers/parse-non-esri-types';
-import { parseAliasesWrite } from '../../helpers/parse-aliases';
 import { validateWithValidator } from '../../helpers/validate';
 
 // Legacy
@@ -31,27 +30,19 @@ export const validateAttributes = (attributes, schema, partialUpdate) => {
   const validationSchema = partialUpdate ? partialSchema : schema;
   const validator = ajv.compile(validationSchema);
 
-  const cleanAttributes = parseAliasesWrite(attributes, schema);
-
-  return validateWithValidator(cleanAttributes, validator, validationSchema);
+  return validateWithValidator(attributes, validator, validationSchema);
 };
 
 export const filterAttributes = (attributes, schema, validator) => {
   if (!validator) return attributes;
 
-  const cleanAttributes = parseAliasesWrite(attributes, schema);
-
-  const validationError = validateWithValidator(
-    cleanAttributes,
-    validator,
-    schema,
-  );
+  const validationError = validateWithValidator(attributes, validator, schema);
 
   if (validationError) {
     throw validationError;
   }
 
-  return parseNonEsriTypesWrite(cleanAttributes, schema);
+  return parseNonEsriTypesWrite(attributes, schema);
 };
 
 export default filterAttributes;

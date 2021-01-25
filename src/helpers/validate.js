@@ -1,4 +1,4 @@
-/* Copyright 2020 Esri
+/* Copyright 2021 Esri
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,26 +13,6 @@
  * limitations under the License.
  */
 
-const applyAliasesToPath = (dataPath, schemaPath, schema) => {
-  const schemaPathComponents = schemaPath.split('/');
-  const field = schemaPathComponents[2];
-
-  const alias = schema.properties[field] && schema.properties[field].alias;
-
-  if (alias) {
-    schemaPathComponents.splice(2, 1, alias);
-    return {
-      dataPath: `.${alias}${dataPath.slice(field.length + 1)}`,
-      schemaPath: schemaPathComponents.join('/'),
-    };
-  }
-
-  return {
-    dataPath,
-    schemaPath,
-  };
-};
-
 class ValidationError extends Error {
   constructor(errors = [], data = null, schema = null, ...params) {
     super(...params);
@@ -45,10 +25,7 @@ class ValidationError extends Error {
     console.warn({ errors, data, schema }); // eslint-disable-line
 
     this.name = 'ValidationError';
-    this.errors = errors.map(({ dataPath, schemaPath, ...remainder }) => ({
-      ...remainder,
-      ...applyAliasesToPath(dataPath, schemaPath, schema),
-    }));
+    this.errors = errors;
     this.data = data;
     this.schema = schema;
   }
