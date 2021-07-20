@@ -30,6 +30,7 @@ export default ({ type, ...otherParams }, schema) => {
     ['if']: no1, // eslint-disable-line no-useless-computed-key
     ['then']: no2, // eslint-disable-line no-useless-computed-key
     ['else']: no3, // eslint-disable-line no-useless-computed-key
+    ['allOf']: no4, // eslint-disable-line no-useless-computed-key
     ...partialSchema
   } = schema;
 
