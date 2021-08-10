@@ -22,27 +22,31 @@ export const fetchPagedFeatures = async (
   query,
   inputTime,
 ) => {
-  const result = await requestWithRetry(url, authentication, query, inputTime);
-  const { spatialReference, objectIdFieldName } = result;
-  let { features, exceededTransferLimit } = result;
+  let { resultOffset = 0, resultRecordCount } = query;
+  let features = [];
+  let result;
 
-  while (exceededTransferLimit) {
+  do {
     // eslint-disable-next-line no-await-in-loop
-    const newResult = await requestWithRetry(
+    result = await requestWithRetry(
       url,
       authentication,
-      {
-        ...query,
-        resultOffset: (query.resultOffset || 0) + features.length,
-        resultRecordCount:
-          query.resultRecordCount && query.resultRecordCount - features.length,
-      },
+      { ...query, resultOffset, resultRecordCount },
       inputTime,
     );
-    ({ exceededTransferLimit } = newResult);
 
-    features = features.concat(newResult.features);
-  }
+    features = features.concat(result.features);
+
+    resultOffset += result.features.length;
+    if (resultRecordCount !== undefined) {
+      resultRecordCount -= features.length;
+    }
+  } while (
+    result.exceededTransferLimit &&
+    (resultRecordCount > 0 || resultRecordCount === undefined)
+  );
+
+  const { spatialReference, objectIdFieldName } = result;
 
   return {
     features,
