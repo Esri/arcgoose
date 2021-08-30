@@ -15,6 +15,7 @@
 
 import Find from './find';
 import ApplyEdits from './apply-edits';
+import Append from './append';
 
 const parseValue = (value) =>
   typeof value === 'string' ? `'${value}'` : `${value}`;
@@ -59,6 +60,14 @@ export class FeatureLayer {
 
   applyEdits() {
     return new ApplyEdits(
+      this,
+      { schema: this.schema, ajv: this.ajv },
+      this.authentication,
+    );
+  }
+
+  append() {
+    return new Append(
       this,
       { schema: this.schema, ajv: this.ajv },
       this.authentication,
