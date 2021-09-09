@@ -28,7 +28,7 @@ export class Append {
     this.authentication = authentication;
   }
 
-  edits(features) {
+  add(features) {
     parseCreate(features, { schema: this.schema, ajv: this.ajv }).forEach(
       (feature) => {
         this.edits.push(feature);
@@ -59,31 +59,40 @@ export class Append {
       authentication: this.authentication,
       useGlobalIds: this.shouldUseGlobalIds,
       rollbackOnFailure: this.shouldRollbackOnFailure,
-      edits: JSON.stringify(this.edits),
-      upserts: true,
+      edits: JSON.stringify({
+        layers: [
+          {
+            featureSet: {
+              features: this.edits,
+              geometryType: 'esriGeometryPolygon',
+            },
+          },
+        ],
+      }),
+      upsert: true,
+      appendUploadFormat: 'featureCollection',
     };
+    console.log(query);
 
     const result = await requestWithRetry(
       `${this.featureLayer.url}/append`,
       this.authentication,
       query,
     );
-    let { status } = result;
-    const { itemId } = result;
+    const { statusUrl } = result;
+    let status = 'Processing';
 
-    console.log(status);
-
-    while (status === 'processing') {
+    while (['Pending', 'Processing'].includes(status)) {
       // eslint-disable-next-line
       await wait(1000);
 
       // eslint-disable-next-line
-      ({ status } = await requestWithRetry(
-        `${this.featureLayer.url}/append/jobs/${itemId}`,
+      const statusResult = await requestWithRetry(
+        statusUrl,
         this.authentication,
-      ));
-
-      console.log(status);
+      );
+      console.log(statusResult);
+      ({ status } = statusResult);
     }
 
     // TODO: handle status different from 'Complete';
