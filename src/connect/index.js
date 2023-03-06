@@ -44,6 +44,7 @@ export default async ({ url, portal, portalItemId, authentication }) => {
       update: service.capabilities.includes('Update'),
       delete: service.capabilities.includes('Delete'),
       editing: service.capabilities.includes('Editing'),
+      extract: service.capabilities.includes('Extract'),
     },
     layers: {},
     tables: {},
