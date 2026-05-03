@@ -16,7 +16,7 @@
     "@esri/arcgis-rest-portal": "^2.3.0",
     "@esri/arcgis-rest-request": "^2.3.0",
     "ajv": "^6.10.2",
-    "uuid": "^3.3.2"
+    "uuid": "^14.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
@@ -29,7 +29,7 @@
     "eslint-config-prettier": "^6.11.0",
     "eslint-loader": "^2.2.1",
     "eslint-plugin-import": "^2.18.2",
-    "jest": "^24.8.0",
+    "jest": "^30.3.0",
     "prettier": "^2.0.5",
     "webpack": "^4.39.2",
     "webpack-cli": "^3.3.6",
